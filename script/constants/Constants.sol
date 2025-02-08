@@ -6,6 +6,6 @@ abstract contract Constants {
     bytes11 public constant XERC20_FACTORY_ENTROPY = 0x0000000000000000000111;
 
     // used by factory
-    bytes11 public constant XERC20_ENTROPY = 0x0000000000000000000001;
-    bytes11 public constant LOCKBOX_ENTROPY = 0x0000000000000000000011;
+    bytes11 public constant XERC20_ENTROPY = 0x0000000000000000000000;
+    bytes11 public constant LOCKBOX_ENTROPY = 0x0000000000000000000001;
 }
