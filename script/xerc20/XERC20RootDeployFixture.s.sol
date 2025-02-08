@@ -69,7 +69,14 @@ abstract contract XERC20RootDeployFixture is DeployFixture {
     function logOutput() internal override {
         if (isTest) return;
         string memory root = vm.projectRoot();
-        string memory path = string(abi.encodePacked(root, "/deployment-addresses/", _params.outputFilename));
+        string memory dirPath = string(abi.encodePacked(root, "/deployment-addresses"));
+        string memory path = string(abi.encodePacked(dirPath, "/", _params.outputFilename));
+
+        // Create directory if it doesn't exist
+        if (!vm.exists(dirPath)) {
+            vm.createDir(dirPath, true);
+        }
+
         vm.writeJson(vm.serializeAddress("", "rootXFactory", address(rootXFactory)), path);
         vm.writeJson(vm.serializeAddress("", "rootXERC20", address(rootXERC20)), path);
         vm.writeJson(vm.serializeAddress("", "rootLockbox", address(rootLockbox)), path);

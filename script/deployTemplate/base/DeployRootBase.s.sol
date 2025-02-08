@@ -8,7 +8,7 @@ contract DeployRootBase is XERC20RootDeployFixture {
         _params = XERC20RootDeployFixture.RootDeploymentParameters({
             tokenAdmin: 0xa7ECcdb9Be08178f896c26b7BbD8C3D4E844d9Ba,
             rootToken: 0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85,
-            outputFilename: "optimism.json"
+            outputFilename: "base.json"
         });
     }
 }

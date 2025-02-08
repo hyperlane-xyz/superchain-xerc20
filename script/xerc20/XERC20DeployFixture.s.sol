@@ -61,7 +61,14 @@ abstract contract XERC20DeployFixture is DeployFixture {
     function logOutput() internal override {
         if (isTest) return;
         string memory root = vm.projectRoot();
-        string memory path = string(abi.encodePacked(root, "/deployment-addresses/", _params.outputFilename));
+        string memory dirPath = string(abi.encodePacked(root, "/deployment-addresses"));
+        string memory path = string(abi.encodePacked(dirPath, "/", _params.outputFilename));
+
+        // Create directory if it doesn't exist
+        if (!vm.exists(dirPath)) {
+            vm.createDir(dirPath, true);
+        }
+
         /// @dev This might overwrite an existing output file
         vm.writeJson(vm.serializeAddress("", "leafXFactory", address(leafXFactory)), path);
         vm.writeJson(vm.serializeAddress("", "leafXERC20", address(leafXERC20)), path);
