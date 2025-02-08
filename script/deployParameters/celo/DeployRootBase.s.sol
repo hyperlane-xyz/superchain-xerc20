@@ -6,9 +6,9 @@ import {XERC20RootDeployFixture} from "../../xerc20/XERC20RootDeployFixture.s.so
 contract DeployRootBase is XERC20RootDeployFixture {
     function setUp() public override {
         _params = XERC20RootDeployFixture.RootDeploymentParameters({
-            tokenAdmin: 0xBA4BB89f4d1E66AA86B60696534892aE0cCf91F5,
-            rootToken: 0x94b008aA00579c1307B0EF2c499aD98a8ce58e58,
-            outputFilename: "optimism.json"
+            tokenAdmin: 0xa7ECcdb9Be08178f896c26b7BbD8C3D4E844d9Ba,
+            rootToken: 0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e,
+            outputFilename: "celo.json"
         });
     }
 }

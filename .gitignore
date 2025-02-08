@@ -11,3 +11,5 @@ package-lock.json
 
 # Coverage
 lcov.info
+
+.DS_Store

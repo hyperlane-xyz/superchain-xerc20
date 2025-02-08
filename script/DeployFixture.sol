@@ -18,7 +18,7 @@ abstract contract DeployFixture is Script, Constants {
 
     ICreateX public cx = ICreateX(0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed);
 
-    address public deployer = 0x4994DacdB9C57A811aFfbF878D92E00EF2E5C4C2;
+    address public deployer = 0xa7ECcdb9Be08178f896c26b7BbD8C3D4E844d9Ba;
 
     function setUp() public virtual;
 
