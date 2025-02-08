@@ -1,19 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import {DeployBaseFixture} from "../../01_DeployBaseFixture.s.sol";
+import {XERC20DeployFixture} from "../../xerc20/XERC20DeployFixture.s.sol";
 
-contract DeployBase is DeployBaseFixture {
+contract DeployBase is XERC20DeployFixture {
     function setUp() public override {
-        _params = DeployBaseFixture.DeploymentParameters({
-            weth: 0x4200000000000000000000000000000000000006,
-            poolAdmin: 0x6E5962C654488774406ffe04fc9A823546Fd94Bc,
-            pauser: 0x6E5962C654488774406ffe04fc9A823546Fd94Bc,
-            feeManager: 0x6E5962C654488774406ffe04fc9A823546Fd94Bc,
+        _params = XERC20DeployFixture.DeploymentParameters({
             tokenAdmin: 0x6E5962C654488774406ffe04fc9A823546Fd94Bc,
-            bridgeOwner: 0x6E5962C654488774406ffe04fc9A823546Fd94Bc,
-            moduleOwner: 0x6E5962C654488774406ffe04fc9A823546Fd94Bc,
-            mailbox: 0x3a464f746D23Ab22155710f44dB16dcA53e0775E,
             outputFilename: "superseed.json"
         });
     }
