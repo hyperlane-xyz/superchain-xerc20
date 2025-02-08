@@ -1,5 +1,0 @@
-CreateGaugeIntegrationConcreteTest
-├── When the caller is not Voter
-│   └── It reverts with {NotVoter}
-└── When the caller is Voter
-    └── It creates a new gauge
