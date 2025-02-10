@@ -6,6 +6,7 @@ import "../DeployFixture.sol";
 import {XERC20Factory} from "src/xerc20/XERC20Factory.sol";
 import {XERC20} from "src/xerc20/XERC20.sol";
 import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+
 abstract contract XERC20DeployFixture is DeployFixture {
     using CreateXLibrary for bytes11;
 
