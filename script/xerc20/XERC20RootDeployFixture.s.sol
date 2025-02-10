@@ -6,6 +6,7 @@ import "../DeployFixture.sol";
 import {XERC20Lockbox} from "src/xerc20/XERC20Lockbox.sol";
 import {XERC20Factory} from "src/xerc20/XERC20Factory.sol";
 import {XERC20} from "src/xerc20/XERC20.sol";
+import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 abstract contract XERC20RootDeployFixture is DeployFixture {
     using CreateXLibrary for bytes11;
@@ -49,6 +50,40 @@ abstract contract XERC20RootDeployFixture is DeployFixture {
         (address _xERC20, address _lockbox) = rootXFactory.deployXERC20WithLockbox();
         rootXERC20 = XERC20(_xERC20);
         rootLockbox = XERC20Lockbox(_lockbox);
+
+        // Deploy proxy pointing to XERC20 implementation
+        address proxy = cx.deployCreate3({
+            salt: XERC20_PROXY_ENTROPY.calculateSalt({_deployer: deployer}),
+            initCode: abi.encodePacked(
+                type(TransparentUpgradeableProxy).creationCode,
+                abi.encode(
+                    address(rootXERC20), // implementation
+                    _params.tokenAdmin, // admin
+                    "" // no initialization data needed
+                )
+            )
+        });
+        checkAddress({_entropy: XERC20_PROXY_ENTROPY, _output: proxy});
+
+        // Point rootXERC20 to proxy address
+        rootXERC20 = XERC20(proxy);
+
+        // Deploy proxy pointing to XERC20Lockbox implementation
+        address lockboxProxy = cx.deployCreate3({
+            salt: LOCKBOX_PROXY_ENTROPY.calculateSalt({_deployer: deployer}),
+            initCode: abi.encodePacked(
+                type(TransparentUpgradeableProxy).creationCode,
+                abi.encode(
+                    address(rootLockbox), // implementation
+                    _params.tokenAdmin, // admin
+                    "" // no initialization data needed
+                )
+            )
+        });
+        checkAddress({_entropy: LOCKBOX_PROXY_ENTROPY, _output: lockboxProxy});
+
+        // Point rootLockbox to proxy address
+        rootLockbox = XERC20Lockbox(lockboxProxy);
     }
 
     function params() external view returns (RootDeploymentParameters memory) {
