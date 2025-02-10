@@ -70,7 +70,7 @@ deploy_contract() {
     # First run simulation
     forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) -vvvv
     # Then do actual deployment
-    forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) --broadcast --verify -vvvv --verifier $verifierType --verifier-url $verifierUrl --private-key $(hypkey mainnet3)
+    forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) --broadcast --verify -vvvv --verifier $verifierType --verifier-url $verifierUrl --private-key $(hypkey mainnet3) --evm-version paris
 }
 
 # Deploy base
