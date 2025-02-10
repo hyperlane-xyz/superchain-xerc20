@@ -30,10 +30,10 @@ interface IXERC20Factory {
     function LOCKBOX_ENTROPY() external view returns (bytes11);
 
     /// @notice Deploys a new XERC20 token with a deterministic address
-    /// @dev Reverts if chain id is 10 (Optimism)
+    /// @dev Reverts if chain id is 42220 (Celo)
     function deployXERC20() external returns (address _XERC20);
 
     /// @notice Deploys a new XERC20 token with a deterministic address with a corresponding lockbox
-    /// @dev Reverts if chain is not 10 (i.e. not Optimism)
+    /// @dev Reverts if chain is not 42220 (i.e. not Celo)
     function deployXERC20WithLockbox() external returns (address _XERC20, address _lockbox);
 }

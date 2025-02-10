@@ -7,7 +7,7 @@ contract DeployRootBase is XERC20RootDeployFixture {
     function setUp() public override {
         _params = XERC20RootDeployFixture.RootDeploymentParameters({
             tokenAdmin: 0xa7ECcdb9Be08178f896c26b7BbD8C3D4E844d9Ba,
-            rootToken: 0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e,
+            rootToken: 0xcebA9300f2b948710d2653dD7B07f33A8B32118C,
             outputFilename: "base.json"
         });
     }

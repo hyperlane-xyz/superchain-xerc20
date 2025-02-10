@@ -65,7 +65,7 @@ contract XERC20Factory is IXERC20Factory {
 
     /// @inheritdoc IXERC20Factory
     function deployXERC20() external virtual returns (address _XERC20) {
-        if (block.chainid == 10) revert InvalidChainId();
+        if (block.chainid == 42220) revert InvalidChainId();
 
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
