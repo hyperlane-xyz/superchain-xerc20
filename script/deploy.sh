@@ -68,16 +68,28 @@ deploy_contract() {
     local verifierUrl=$(meta $chain blockExplorers.0.apiUrl)
 
     # First run simulation
-    forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) -vvvv
+    if ! forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) -v; then
+        echo "Simulation failed for $chain"
+        return 1
+    fi
+
     # Then do actual deployment
-    forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) --broadcast --verify -vvvv --verifier $verifierType --verifier-url $verifierUrl --private-key $(hypkey mainnet3) --evm-version paris
+    if ! forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) --broadcast --verify -v --verifier $verifierType --verifier-url $verifierUrl --private-key $(hypkey mainnet3) --evm-version paris; then
+        echo "Deployment failed for $chain"
+        return 1
+    fi
 }
 
 # Deploy base
-deploy_contract "$BASE_CHAIN" "$BASE_TARGET" "DeployRootBase"
+if ! deploy_contract "$BASE_CHAIN" "$BASE_TARGET" "DeployRootBase"; then
+    echo "Failed to deploy base contract, but continuing..."
+fi
 
 # Deploy leaves
 for LEAF_CHAIN in "${LEAF_CHAINS[@]}"; do
     LEAF_TARGET="./script/deployParameters/${LEAF_CHAIN}/DeployBase.s.sol"
-    deploy_contract "$LEAF_CHAIN" "$LEAF_TARGET" "DeployBase"
+    if ! deploy_contract "$LEAF_CHAIN" "$LEAF_TARGET" "DeployBase"; then
+        echo "Failed to deploy leaf contract for $LEAF_CHAIN, but continuing..."
+        continue
+    fi
 done
