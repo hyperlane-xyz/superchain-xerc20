@@ -56,9 +56,9 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
 
         // run deployments as address(this)
         // at end of deployment, address(this) should have no ownership
-        rewardToken = new TestERC20("Reward Token", "RWRD", 18);
+        rewardToken = new TestERC20("Reward Token", "RWRD", 6);
 
-        TestERC20 tokenA = new TestERC20("Test Token A", "TTA", 18);
+        TestERC20 tokenA = new TestERC20("Test Token A", "TTA", 6);
         TestERC20 tokenB = new TestERC20("Test Token B", "TTB", 6); // mimic USDC
         weth = new MockWETH();
         (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
