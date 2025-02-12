@@ -16,7 +16,12 @@ contract DeployXERC20WithLockboxUnitConcreteTest is XERC20FactoryTest {
         // It should revert with {FailedContractCreation}
         xFactory.deployXERC20WithLockbox();
 
-        vm.expectRevert(abi.encodeWithSelector(CreateX.FailedContractCreation.selector, address(cx)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                CreateX.FailedContractCreation.selector,
+                address(cx)
+            )
+        );
         xFactory.deployXERC20WithLockbox();
     }
 
@@ -41,35 +46,56 @@ contract DeployXERC20WithLockboxUnitConcreteTest is XERC20FactoryTest {
         bytes32 lockboxSalt = keccak256(
             abi.encodePacked(
                 uint256(uint160(address(xFactory))),
-                CreateXLibrary.calculateSalt({_entropy: LOCKBOX_ENTROPY, _deployer: address(xFactory)})
+                CreateXLibrary.calculateSalt({
+                    _entropy: LOCKBOX_ENTROPY,
+                    _deployer: address(xFactory)
+                })
             )
         );
-        address expectedLockboxAddress = cx.computeCreate3Address({salt: lockboxSalt, deployer: address(cx)});
+        address expectedLockboxAddress = cx.computeCreate3Address({
+            salt: lockboxSalt,
+            deployer: address(cx)
+        });
 
         bytes32 guardedSalt = keccak256(
             abi.encodePacked(
                 uint256(uint160(address(xFactory))),
-                CreateXLibrary.calculateSalt({_entropy: XERC20_ENTROPY, _deployer: address(xFactory)})
+                CreateXLibrary.calculateSalt({
+                    _entropy: XERC20_ENTROPY,
+                    _deployer: address(xFactory)
+                })
             )
         );
-        address expectedTokenAddress = cx.computeCreate3Address({salt: guardedSalt, deployer: address(cx)});
+        address expectedTokenAddress = cx.computeCreate3Address({
+            salt: guardedSalt,
+            deployer: address(cx)
+        });
 
         vm.expectEmit(address(xFactory));
-        emit IXERC20Factory.DeployXERC20WithLockbox({_xerc20: expectedTokenAddress, _lockbox: expectedLockboxAddress});
+        emit IXERC20Factory.DeployXERC20WithLockbox({
+            _xerc20: expectedTokenAddress,
+            _lockbox: expectedLockboxAddress
+        });
         (address xerc20, address lockbox) = xFactory.deployXERC20WithLockbox();
 
         assertEq(xerc20, expectedTokenAddress);
-        assertEq(IERC20Metadata(xerc20).name(), "Superchain Velodrome");
-        assertEq(IERC20Metadata(xerc20).symbol(), "XVELO");
+        assertEq(IERC20Metadata(xerc20).name(), "Super Tether USD");
+        assertEq(IERC20Metadata(xerc20).symbol(), "USDT");
         assertEq(Ownable(xerc20).owner(), users.owner);
         assertEq(XERC20(xerc20).lockbox(), address(lockbox));
 
         assertEq(lockbox, expectedLockboxAddress);
-        assertEq(address(XERC20Lockbox(lockbox).XERC20()), address(expectedTokenAddress));
+        assertEq(
+            address(XERC20Lockbox(lockbox).XERC20()),
+            address(expectedTokenAddress)
+        );
         assertEq(address(XERC20Lockbox(lockbox).ERC20()), address(rewardToken));
     }
 
-    function testGas_deployXERC20WithLockbox() external givenXERC20NotYetDeployed {
+    function testGas_deployXERC20WithLockbox()
+        external
+        givenXERC20NotYetDeployed
+    {
         xFactory.deployXERC20WithLockbox();
         snapLastCall("XERC20Factory_deployXERC20WithLockbox");
     }
