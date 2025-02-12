@@ -6,9 +6,6 @@ cd "$(dirname "$0")/.."
 # Exit on error
 set -e
 
-# Source the helper functions
-source ./script/runes.sh
-
 # Check for input arguments
 if [ "$#" -lt 2 ]; then
     echo "Usage: $0 <base_chain> <leaf_chain1> [<leaf_chain2> ...]"
