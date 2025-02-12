@@ -52,6 +52,8 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
         // tests run as if chain id is 10 (optimism)
         vm.chainId(10);
 
+        createUsers();
+
         // run deployments as address(this)
         // at end of deployment, address(this) should have no ownership
         rewardToken = new TestERC20("Reward Token", "RWRD", 18);
@@ -59,14 +61,21 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
         TestERC20 tokenA = new TestERC20("Test Token A", "TTA", 18);
         TestERC20 tokenB = new TestERC20("Test Token B", "TTB", 6); // mimic USDC
         weth = new MockWETH();
-        (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+        (token0, token1) = tokenA < tokenB
+            ? (tokenA, tokenB)
+            : (tokenB, tokenA);
 
         deployCreateX();
+
+        console.logAddress(users.owner);
 
         address deployer = users.deployer;
         xFactory = XERC20Factory(
             cx.deployCreate3({
-                salt: CreateXLibrary.calculateSalt({_entropy: XERC20_FACTORY_ENTROPY, _deployer: deployer}),
+                salt: CreateXLibrary.calculateSalt({
+                    _entropy: XERC20_FACTORY_ENTROPY,
+                    _deployer: deployer
+                }),
                 initCode: abi.encodePacked(
                     type(XERC20Factory).creationCode,
                     abi.encode(
@@ -94,6 +103,25 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
     function deployCreateX() internal {
         // identical to CreateX, with versions changed
         deployCodeTo("test/mocks/CreateX.sol", address(cx));
+    }
+
+    function createUsers() internal {
+        users = Users({
+            owner: createUser("Owner"),
+            feeManager: createUser("FeeManager"),
+            alice: createUser("Alice"),
+            bob: createUser("Bob"),
+            charlie: createUser("Charlie"),
+            deployer: createUser("Deployer"),
+            deployer2: createUser("Deployer2")
+        });
+    }
+
+    function createUser(
+        string memory name
+    ) internal returns (address payable user) {
+        user = payable(makeAddr({name: name}));
+        vm.deal({account: user, newBalance: TOKEN_1 * 1_000});
     }
 
     modifier prank(address _caller) {
