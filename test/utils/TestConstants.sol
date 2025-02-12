@@ -4,7 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import {Constants} from "script/constants/Constants.sol";
 
 abstract contract TestConstants is Constants {
-    uint256 public constant TOKEN_1 = 1e18;
+    uint256 public constant TOKEN_1 = 1e6;
     uint256 public constant USDC_1 = 1e6;
     uint256 public constant POOL_1 = 1e9;
 
