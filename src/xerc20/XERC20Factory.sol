@@ -85,7 +85,7 @@ contract XERC20Factory is IXERC20Factory {
 
     /// @inheritdoc IXERC20Factory
     function deployXERC20WithLockbox() external returns (address _XERC20, address _lockbox) {
-        if (block.chainid != 10) revert InvalidChainId();
+        if (block.chainid != 42220) revert InvalidChainId();
 
         address expectedAddress = XERC20_ENTROPY.computeCreate3Address({_deployer: address(this)});
 

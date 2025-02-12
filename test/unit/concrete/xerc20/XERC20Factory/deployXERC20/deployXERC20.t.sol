@@ -15,12 +15,7 @@ contract DeployXERC20UnitConcreteTest is XERC20FactoryTest {
         vm.chainId(31337);
         xFactory.deployXERC20();
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                CreateX.FailedContractCreation.selector,
-                address(cx)
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(CreateX.FailedContractCreation.selector, address(cx)));
         xFactory.deployXERC20();
     }
 
@@ -45,16 +40,10 @@ contract DeployXERC20UnitConcreteTest is XERC20FactoryTest {
         bytes32 guardedSalt = keccak256(
             abi.encodePacked(
                 uint256(uint160(address(xFactory))),
-                CreateXLibrary.calculateSalt({
-                    _entropy: XERC20_ENTROPY,
-                    _deployer: address(xFactory)
-                })
+                CreateXLibrary.calculateSalt({_entropy: XERC20_ENTROPY, _deployer: address(xFactory)})
             )
         );
-        address expectedTokenAddress = cx.computeCreate3Address({
-            salt: guardedSalt,
-            deployer: address(cx)
-        });
+        address expectedTokenAddress = cx.computeCreate3Address({salt: guardedSalt, deployer: address(cx)});
 
         vm.expectEmit(address(xFactory));
         emit IXERC20Factory.DeployXERC20({_xerc20: expectedTokenAddress});

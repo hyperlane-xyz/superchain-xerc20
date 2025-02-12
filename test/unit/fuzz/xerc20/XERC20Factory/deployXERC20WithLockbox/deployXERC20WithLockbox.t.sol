@@ -18,7 +18,7 @@ contract DeployXERC20WithLockboxUnitFuzzTest is XERC20FactoryTest {
 
     function testFuzz_GivenChainIdIsNot10(uint8 chainId) external givenXERC20NotYetDeployed {
         // It should revert with {InvalidChainId}
-        vm.assume(chainId != 10);
+        vm.assume(chainId != 42220);
         vm.chainId(chainId);
 
         vm.expectRevert(IXERC20Factory.InvalidChainId.selector);

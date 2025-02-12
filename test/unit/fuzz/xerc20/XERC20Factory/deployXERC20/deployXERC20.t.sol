@@ -14,29 +14,21 @@ contract DeployXERC20UnitFuzzTest is XERC20FactoryTest {
         _;
     }
 
-    function testFuzz_GivenChainIdIsNot10(
-        uint8 chainId
-    ) external givenXERC20NotYetDeployed {
+    function testFuzz_GivenChainIdIsNot10(uint8 chainId) external givenXERC20NotYetDeployed {
         // It should create a new XERC20 instance
         // It should set the name and symbol of the new XERC20 instance
         // It should set the owner of the new XERC20 instance to the factory
         // It should emit a {DeployXERC20} event
-        vm.assume(chainId != 10);
+        vm.assume(chainId != 42220);
         vm.chainId(chainId);
 
         bytes32 guardedSalt = keccak256(
             abi.encodePacked(
                 uint256(uint160(address(xFactory))),
-                CreateXLibrary.calculateSalt({
-                    _entropy: XERC20_ENTROPY,
-                    _deployer: address(xFactory)
-                })
+                CreateXLibrary.calculateSalt({_entropy: XERC20_ENTROPY, _deployer: address(xFactory)})
             )
         );
-        address expectedTokenAddress = cx.computeCreate3Address({
-            salt: guardedSalt,
-            deployer: address(cx)
-        });
+        address expectedTokenAddress = cx.computeCreate3Address({salt: guardedSalt, deployer: address(cx)});
 
         vm.expectEmit(address(xFactory));
         emit IXERC20Factory.DeployXERC20({_xerc20: expectedTokenAddress});
