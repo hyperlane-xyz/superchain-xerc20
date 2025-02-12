@@ -6,7 +6,7 @@ import {XERC20DeployFixture} from "../../xerc20/XERC20DeployFixture.s.sol";
 contract DeployBase is XERC20DeployFixture {
     function setUp() public override {
         _params = XERC20DeployFixture.DeploymentParameters({
-            tokenAdmin: 0xe915AEf46E1bd9b9eD2D9FE571AE9b5afbDE571b,
+            tokenAdmin: 0xa7ECcdb9Be08178f896c26b7BbD8C3D4E844d9Ba,
             outputFilename: "lisk.json"
         });
     }

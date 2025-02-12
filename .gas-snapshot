@@ -1,0 +1,8 @@
+AddBridgeUnitConcreteTest:testGas_addBridge() (gas: 98833)
+DeployXERC20UnitConcreteTest:testGas_deployXERC20() (gas: 2288880)
+DeployXERC20WithLockboxUnitConcreteTest:testGas_deployXERC20WithLockbox() (gas: 2665100)
+DepositUnitConcreteTest:testGas_deposit() (gas: 306721)
+RemoveBridgeUnitConcreteTest:testGas_removeBridge() (gas: 114065)
+SetBufferCapUnitConcreteTest:testGas_setBufferCap() (gas: 133893)
+SetRateLimitPerSecondCapUnitConcreteTest:testGas_setRateLimitPerSecond() (gas: 128043)
+WithdrawUnitConcreteTest:testGas_withdraw() (gas: 396352)
