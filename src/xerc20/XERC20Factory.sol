@@ -46,9 +46,9 @@ contract XERC20Factory is IXERC20Factory {
     address public immutable erc20;
 
     /// @inheritdoc IXERC20Factory
-    string public constant name = "Superchain Velodrome";
+    string public constant name = "Super Tether USD";
     /// @inheritdoc IXERC20Factory
-    string public constant symbol = "XVELO";
+    string public constant symbol = "USDT";
 
     /// @inheritdoc IXERC20Factory
     bytes11 public constant XERC20_ENTROPY = 0x0000000000000000000000;
