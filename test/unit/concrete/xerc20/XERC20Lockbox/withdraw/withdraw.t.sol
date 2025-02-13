@@ -66,7 +66,6 @@ contract WithdrawToUnitConcreteTest is XERC20LockboxTest {
         assertEq(xVelo.balanceOf(users.alice), 0);
     }
 
-
     function testGas() external {
         uint256 amount = TOKEN_1 * 100_000;
         deal(address(rewardToken), users.alice, amount);
