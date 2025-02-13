@@ -83,6 +83,7 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
         snapshot = vm.snapshotState();
         (address _xVelo, address _lockbox) = xFactory.deployXERC20WithLockbox();
         xVelo = XERC20(_xVelo);
+        xVelo.initialize("Super Tether USD", "USDT", users.owner);
         lockbox = XERC20Lockbox(_lockbox);
 
         labelContracts();
