@@ -2,7 +2,8 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import {ERC20PermitUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
+import {ERC20PermitUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
 import {SafeCast} from "@openzeppelin5/contracts/utils/math/SafeCast.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
@@ -41,7 +42,14 @@ import {RateLimitMidPoint} from "../libraries/rateLimits/RateLimitMidpointCommon
 /// @title XERC20 with CrosschainERC20 support
 /// @author Lunar Enterprise Ventures, Ltd., velodrome.finance
 /// @notice Extension of ERC20 for bridged tokens
-contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpgradeable, MintLimits, ISuperchainERC20 {
+contract XERC20 is
+    ERC20Upgradeable,
+    OwnableUpgradeable,
+    IXERC20,
+    ERC20PermitUpgradeable,
+    MintLimits,
+    ISuperchainERC20
+{
     using SafeCast for uint256;
 
     /// @inheritdoc IXERC20
@@ -57,11 +65,14 @@ contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpg
 
     /// @notice Constructs the initial config of the XERC20
     /// @param _lockbox The lockbox corresponding to the token
-    constructor(string memory _name, string memory _symbol, address _owner, address _lockbox)
-    {
+    constructor(string memory _name, string memory _symbol, address _owner, address _lockbox) {
         lockbox = _lockbox;
     }
 
+    /// @notice Initializes the contract
+    /// @param _name The name of the token
+    /// @param _symbol The symbol of the token
+    /// @param _owner The owner of the contract
     function initialize(string memory _name, string memory _symbol, address _owner) public initializer {
         __ERC20_init(_name, _symbol);
         __ERC20Permit_init(_name);
