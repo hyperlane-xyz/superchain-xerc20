@@ -50,7 +50,7 @@ contract DeployXERC20UnitConcreteTest is XERC20FactoryTest {
         address xerc20 = xFactory.deployXERC20();
 
         assertEq(xerc20, expectedTokenAddress);
-        assertEq(IERC20Metadata(xerc20).name(), "Super Tether USD");
+        assertEq(IERC20Metadata(xerc20).name(), "Super USDT");
         assertEq(IERC20Metadata(xerc20).symbol(), "USDT");
         assertEq(Ownable(xerc20).owner(), users.owner);
         assertEq(XERC20(xerc20).lockbox(), address(0));
