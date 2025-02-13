@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Source bashrc to get access to meta/addr/rpc commands
+if [ -f "$HOME/.bashrc" ]; then
+    source "$HOME/.bashrc"
+fi
+
 # Start from repository root
 cd "$(dirname "$0")/.."
 
