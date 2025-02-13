@@ -65,8 +65,7 @@ contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpg
     function initialize(string memory _name, string memory _symbol, address _owner) public initializer {
         __ERC20_init(_name, _symbol);
         __ERC20Permit_init(_name);
-        __Ownable_init();
-        transferOwnership(_owner);
+        __Ownable_init(_owner);
     }
 
     function decimals() public view virtual override returns (uint8) {

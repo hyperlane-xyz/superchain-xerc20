@@ -113,6 +113,8 @@ contract XERC20Factory is IXERC20Factory {
             )
         });
 
+        XERC20(_XERC20).initialize(name, symbol, owner);
+
         emit DeployXERC20WithLockbox({_xerc20: _XERC20, _lockbox: _lockbox});
     }
 }

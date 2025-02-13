@@ -5,7 +5,7 @@ import "test/BaseFixture.sol";
 
 abstract contract XERC20Test is BaseFixture {
     function test_InitialState() public view {
-        assertEq(xVelo.name(), "Super Tether USD");
+        assertEq(xVelo.name(), "Super USDT");
         assertEq(xVelo.symbol(), "USDT");
         assertEq(xVelo.owner(), users.owner);
         assertEq(xVelo.lockbox(), address(lockbox));
