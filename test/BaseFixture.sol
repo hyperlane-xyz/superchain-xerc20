@@ -36,9 +36,6 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
 
     /// tokens
     TestERC20 public rewardToken;
-    TestERC20 public token0;
-    TestERC20 public token1;
-    MockWETH public weth;
 
     /// mocks
     CreateX public cx = CreateX(0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed);
@@ -58,14 +55,7 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
         // at end of deployment, address(this) should have no ownership
         rewardToken = new TestERC20("Reward Token", "RWRD", 6);
 
-        TestERC20 tokenA = new TestERC20("Test Token A", "TTA", 6);
-        TestERC20 tokenB = new TestERC20("Test Token B", "TTB", 6); // mimic USDC
-        weth = new MockWETH();
-        (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-
         deployCreateX();
-
-        console.logAddress(users.owner);
 
         address deployer = users.deployer;
         xFactory = XERC20Factory(

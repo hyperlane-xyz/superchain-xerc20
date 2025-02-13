@@ -36,7 +36,7 @@ import {CreateXLibrary} from "../libraries/CreateXLibrary.sol";
 /// @title XERC20Factory
 /// @notice Deploys a canonical XERC20 on each chain
 /// @dev Depends on CreateX, assumes bytecode for CreateX has already been checked prior to deployment
-/// @dev Supports 18 decimal tokens only. Pass in the erc20 address on root to create a lockbox for it.
+/// @dev Supports 6 decimal tokens only. Pass in the erc20 address on root to create a lockbox for it.
 contract XERC20Factory is IXERC20Factory {
     using CreateXLibrary for bytes11;
 
