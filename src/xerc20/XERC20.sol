@@ -65,7 +65,7 @@ contract XERC20 is
 
     /// @notice Constructs the initial config of the XERC20
     /// @param _lockbox The lockbox corresponding to the token
-    constructor(string memory _name, string memory _symbol, address _owner, address _lockbox) {
+    constructor(address _lockbox) {
         lockbox = _lockbox;
     }
 

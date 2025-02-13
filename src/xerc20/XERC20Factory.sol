@@ -7,6 +7,7 @@ import {XERC20} from "./XERC20.sol";
 import {IXERC20Factory} from "../interfaces/xerc20/IXERC20Factory.sol";
 import {XERC20Lockbox} from "./XERC20Lockbox.sol";
 import {CreateXLibrary} from "../libraries/CreateXLibrary.sol";
+import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 /*
 
@@ -36,7 +37,7 @@ import {CreateXLibrary} from "../libraries/CreateXLibrary.sol";
 /// @title XERC20Factory
 /// @notice Deploys a canonical XERC20 on each chain
 /// @dev Depends on CreateX, assumes bytecode for CreateX has already been checked prior to deployment
-/// @dev Supports 18 decimal tokens only. Pass in the erc20 address on root to create a lockbox for it.
+/// @dev Supports 6 decimal tokens only. Pass in the erc20 address on root to create a lockbox for it.
 contract XERC20Factory is IXERC20Factory {
     using CreateXLibrary for bytes11;
 
@@ -55,6 +56,8 @@ contract XERC20Factory is IXERC20Factory {
     /// @inheritdoc IXERC20Factory
     bytes11 public constant LOCKBOX_ENTROPY = 0x0000000000000000000001;
 
+    bytes11 public constant IMPLEMENTATION_ENTROPY = 0x1000000000000000000000;
+
     /// @notice Constructs the initial config of the XERC20Factory
     /// @param _owner The address of the initial owner for XERC20 deployments
     constructor(address _owner, address _erc20) {
@@ -67,15 +70,24 @@ contract XERC20Factory is IXERC20Factory {
     function deployXERC20() external virtual returns (address _XERC20) {
         if (block.chainid == 42220) revert InvalidChainId();
 
-        _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
-            salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
+        address implementation = CreateXLibrary.CREATEX.deployCreate3({
+            salt: IMPLEMENTATION_ENTROPY.calculateSalt({_deployer: address(this)}),
             initCode: abi.encodePacked(
                 type(XERC20).creationCode,
                 abi.encode(
-                    name, // name of xerc20
-                    symbol, // symbol of xerc20
-                    owner, // owner of xerc20
                     address(0) // no lockbox
+                )
+            )
+        });
+
+        _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
+            salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
+            initCode: abi.encodePacked(
+                type(TransparentUpgradeableProxy).creationCode,
+                abi.encode(
+                    implementation, // logic
+                    owner, // initialOwner
+                    abi.encodeCall(XERC20.initialize, (name, symbol, owner))
                 )
             )
         });
@@ -100,20 +112,22 @@ contract XERC20Factory is IXERC20Factory {
             )
         });
 
+        address implementation = CreateXLibrary.CREATEX.deployCreate3({
+            salt: IMPLEMENTATION_ENTROPY.calculateSalt({_deployer: address(this)}),
+            initCode: abi.encodePacked(type(XERC20).creationCode, abi.encode(_lockbox))
+        });
+
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
             initCode: abi.encodePacked(
-                type(XERC20).creationCode,
+                type(TransparentUpgradeableProxy).creationCode,
                 abi.encode(
-                    name, // name of xerc20
-                    symbol, // symbol of xerc20
-                    owner, // owner of xerc20
-                    _lockbox // lockbox corresponding to xerc20
+                    implementation, // logic
+                    owner, // initialOwner
+                    abi.encodeCall(XERC20.initialize, (name, symbol, owner))
                 )
             )
         });
-
-        XERC20(_XERC20).initialize(name, symbol, owner);
 
         emit DeployXERC20WithLockbox({_xerc20: _XERC20, _lockbox: _lockbox});
     }
