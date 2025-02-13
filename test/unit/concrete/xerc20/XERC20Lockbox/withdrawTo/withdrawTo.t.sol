@@ -3,16 +3,10 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import "../XERC20Lockbox.t.sol";
 
-contract WithdrawUnitConcreteTest is XERC20LockboxTest {
+contract WithdrawToUnitConcreteTest is XERC20LockboxTest {
     function test_GivenAnyAmount() external {
         // It should burn the amount of XERC20 tokens from the caller
-        // It should transfer the amount of ERC20 tokens from the lockbox to the caller
-        // It should emit a {Withdraw} event
-    }
-
-    function test_withdraw_GivenAnyAmount() external {
-        // It should burn the amount of XERC20 tokens from the caller
-        // It should transfer the amount of ERC20 tokens from the lockbox to the caller
+        // It should transfer the amount of ERC20 tokens from the lockbox to the user
         // It should emit a {Withdraw} event
         uint256 amount = TOKEN_1 * 100_000;
         deal(address(rewardToken), users.alice, amount);
@@ -26,14 +20,14 @@ contract WithdrawUnitConcreteTest is XERC20LockboxTest {
 
         vm.expectEmit(address(lockbox));
         emit IXERC20Lockbox.Withdraw({_sender: users.alice, _amount: amount});
-        lockbox.withdraw(amount);
+        lockbox.withdrawTo(users.alice, amount);
 
         assertEq(rewardToken.balanceOf(users.alice), amount);
         assertEq(rewardToken.balanceOf(address(lockbox)), 0);
         assertEq(xVelo.balanceOf(users.alice), 0);
     }
 
-    function testGas_withdraw() external {
+    function testGas() external {
         uint256 amount = TOKEN_1 * 100_000;
         deal(address(rewardToken), users.alice, amount);
 
@@ -43,7 +37,7 @@ contract WithdrawUnitConcreteTest is XERC20LockboxTest {
         lockbox.deposit(amount);
 
         xVelo.approve(address(lockbox), amount);
-        lockbox.withdraw(amount);
-        snapLastCall("XERC20Lockbox_withdraw");
+        lockbox.withdrawTo(users.alice, amount);
+        snapLastCall("XERC20Lockbox_withdrawTo");
     }
 }
