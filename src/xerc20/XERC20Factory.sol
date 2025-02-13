@@ -70,15 +70,11 @@ contract XERC20Factory is IXERC20Factory {
     function deployXERC20() external virtual returns (address _XERC20) {
         if (block.chainid == 42220) revert InvalidChainId();
 
-        address implementation = CreateXLibrary.CREATEX.deployCreate3({
-            salt: IMPLEMENTATION_ENTROPY.calculateSalt({_deployer: address(this)}),
-            initCode: abi.encodePacked(
-                type(XERC20).creationCode,
-                abi.encode(
-                    address(0) // no lockbox
-                )
+        address implementation = address(
+            new XERC20(
+                address(0) // no lockbox
             )
-        });
+        );
 
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
@@ -96,10 +92,15 @@ contract XERC20Factory is IXERC20Factory {
     }
 
     /// @inheritdoc IXERC20Factory
-    function deployXERC20WithLockbox() external returns (address _XERC20, address _lockbox) {
+    function deployXERC20WithLockbox()
+        external
+        returns (address _XERC20, address _lockbox)
+    {
         if (block.chainid != 42220) revert InvalidChainId();
 
-        address expectedAddress = XERC20_ENTROPY.computeCreate3Address({_deployer: address(this)});
+        address expectedAddress = XERC20_ENTROPY.computeCreate3Address({
+            _deployer: address(this)
+        });
 
         _lockbox = CreateXLibrary.CREATEX.deployCreate3({
             salt: LOCKBOX_ENTROPY.calculateSalt({_deployer: address(this)}),
@@ -112,10 +113,7 @@ contract XERC20Factory is IXERC20Factory {
             )
         });
 
-        address implementation = CreateXLibrary.CREATEX.deployCreate3({
-            salt: IMPLEMENTATION_ENTROPY.calculateSalt({_deployer: address(this)}),
-            initCode: abi.encodePacked(type(XERC20).creationCode, abi.encode(_lockbox))
-        });
+        address implementation = address(new XERC20(_lockbox));
 
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
