@@ -7,7 +7,7 @@ import {IWETH} from "src/interfaces/external/IWETH.sol";
 contract MockWETH is IWETH {
     string public name = "Wrapped Ether";
     string public symbol = "WETH";
-    uint8 public decimals = 6;
+    uint8 public decimals = 18;
 
     event Deposit(address indexed dst, uint256 wad);
     event Withdrawal(address indexed src, uint256 wad);
