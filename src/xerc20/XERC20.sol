@@ -57,8 +57,8 @@ contract XERC20 is
     /// @inheritdoc ISuperchainERC20
     address public constant SUPERCHAIN_ERC20_BRIDGE = 0x4200000000000000000000000000000000000028;
 
-    /// @notice maximum rate limit per second is 25k
-    uint128 public constant MAX_RATE_LIMIT_PER_SECOND = 25_000 * 1e6;
+    /// @notice maximum rate limit per second is 25M
+    uint128 public constant MAX_RATE_LIMIT_PER_SECOND = 25_000_000 * 1e6;
 
     /// @notice minimum buffer cap
     uint112 public constant MIN_BUFFER_CAP = 1_000 * 1e6;
