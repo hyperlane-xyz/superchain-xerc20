@@ -57,8 +57,6 @@ contract XERC20Factory is IXERC20Factory {
     /// @inheritdoc IXERC20Factory
     bytes11 public constant LOCKBOX_ENTROPY = 0x0000000000000000000001;
 
-    bytes11 public constant IMPLEMENTATION_ENTROPY = 0x1000000000000000000000;
-
     /// @notice Constructs the initial config of the XERC20Factory
     /// @param _owner The address of the initial owner for XERC20 deployments
     constructor(address _owner, address _erc20) {
