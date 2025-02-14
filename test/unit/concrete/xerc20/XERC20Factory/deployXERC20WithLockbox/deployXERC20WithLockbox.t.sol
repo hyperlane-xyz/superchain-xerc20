@@ -7,7 +7,7 @@ contract DeployXERC20WithLockboxUnitConcreteTest is XERC20FactoryTest {
     function setUp() public override {
         super.setUp();
 
-        // chain is already optimism
+        // chain is already celo
 
         vm.startPrank(users.alice);
     }
@@ -24,7 +24,7 @@ contract DeployXERC20WithLockboxUnitConcreteTest is XERC20FactoryTest {
         _;
     }
 
-    function test_GivenChainIdIsNot10() external givenXERC20NotYetDeployed {
+    function test_GivenChainIdIsNot42220() external givenXERC20NotYetDeployed {
         // It should revert with {InvalidChainId}
         vm.chainId(31337);
 
@@ -32,7 +32,7 @@ contract DeployXERC20WithLockboxUnitConcreteTest is XERC20FactoryTest {
         xFactory.deployXERC20WithLockbox();
     }
 
-    function test_GivenChainIdIs10() external givenXERC20NotYetDeployed {
+    function test_GivenChainIdIs42220() external givenXERC20NotYetDeployed {
         // It should create a new XERC20 instance
         // It should create a new XERC20Lockbox instance
         // It should set the name and symbol of the new XERC20 instance
