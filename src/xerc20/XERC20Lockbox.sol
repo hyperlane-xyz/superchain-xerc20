@@ -60,8 +60,17 @@ contract XERC20Lockbox is IXERC20Lockbox {
 
     /// @inheritdoc IXERC20Lockbox
     function withdraw(uint256 _amount) external {
+        _withdraw(msg.sender, _amount);
+    }
+
+    /// @inheritdoc IXERC20Lockbox
+    function withdrawTo(address _to, uint256 _amount) external {
+        _withdraw(_to, _amount);
+    }
+
+    function _withdraw(address _to, uint256 _amount) internal {
         XERC20.burn(msg.sender, _amount);
-        ERC20.safeTransfer(msg.sender, _amount);
+        ERC20.safeTransfer(_to, _amount);
         emit Withdraw(msg.sender, _amount);
     }
 }
