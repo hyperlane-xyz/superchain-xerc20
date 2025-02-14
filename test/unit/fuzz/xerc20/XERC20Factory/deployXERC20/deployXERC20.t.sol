@@ -14,7 +14,7 @@ contract DeployXERC20UnitFuzzTest is XERC20FactoryTest {
         _;
     }
 
-    function testFuzz_GivenChainIdIsNot10(uint8 chainId) external givenXERC20NotYetDeployed {
+    function testFuzz_GivenChainIdIsNot42220(uint8 chainId) external givenXERC20NotYetDeployed {
         // It should create a new XERC20 instance
         // It should set the name and symbol of the new XERC20 instance
         // It should set the owner of the new XERC20 instance to the factory
