@@ -41,7 +41,10 @@ contract WithdrawToUnitConcreteTest is XERC20LockboxTest {
         xVelo.approve(address(lockbox), amount);
 
         vm.expectRevert(
-            abi.encode(IERC20Errors.ERC20InvalidReceiver.selector, address(0))
+            abi.encodeWithSelector(
+                IERC20Errors.ERC20InvalidReceiver.selector,
+                address(0)
+            )
         );
         lockbox.withdrawTo(address(0), amount);
     }
