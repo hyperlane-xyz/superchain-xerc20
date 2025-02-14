@@ -111,13 +111,15 @@ contract XERC20Factory is IXERC20Factory {
 
         address implementation = address(new XERC20(_lockbox));
 
+        ProxyAdmin proxyAdmin = new ProxyAdmin(owner);
+
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
             initCode: abi.encodePacked(
                 type(TransparentUpgradeableProxy).creationCode,
                 abi.encode(
                     implementation, // logic
-                    owner, // initialOwner
+                    proxyAdmin, // proxy admin
                     abi.encodeCall(XERC20.initialize, (name, symbol, owner))
                 )
             )
