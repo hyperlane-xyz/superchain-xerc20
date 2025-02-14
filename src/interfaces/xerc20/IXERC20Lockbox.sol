@@ -29,4 +29,9 @@ interface IXERC20Lockbox {
     /// @notice Withdraw ERC20 tokens from the lockbox
     /// @param _amount The amount of tokens to withdraw
     function withdraw(uint256 _amount) external;
+
+    /// @notice Withdraw ERC20 tokens from the lockbox to a specific address
+    /// @param _to The address to withdraw to
+    /// @param _amount The amount of tokens to withdraw
+    function withdrawTo(address _to, uint256 _amount) external;
 }

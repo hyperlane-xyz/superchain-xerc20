@@ -1,5 +1,7 @@
 WithdrawToUnitConcreteTest
-└── Given any amount
-    ├── It should burn the amount of XERC20 tokens from the caller
-    ├── It should transfer the amount of ERC20 tokens from the lockbox to the user
-    └── It should emit a {Withdraw} event
+├── Given any amount
+│   ├── It should burn the amount of XERC20 tokens from the caller
+│   ├── It should transfer the amount of ERC20 tokens from the lockbox to the user
+│   └── It should emit a {Withdraw} event
+└── Given user is zero address
+    └── It should revert with the error {ERC20InvalidReceiver}

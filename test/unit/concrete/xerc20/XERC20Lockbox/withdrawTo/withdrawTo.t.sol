@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import "../XERC20Lockbox.t.sol";
+import {IERC20Errors} from "@openzeppelin5/contracts/interfaces/draft-IERC6093.sol";
 
 contract WithdrawToUnitConcreteTest is XERC20LockboxTest {
     function test_GivenAnyAmount() external {
@@ -25,6 +26,24 @@ contract WithdrawToUnitConcreteTest is XERC20LockboxTest {
         assertEq(rewardToken.balanceOf(users.alice), amount);
         assertEq(rewardToken.balanceOf(address(lockbox)), 0);
         assertEq(xVelo.balanceOf(users.alice), 0);
+    }
+
+    function test_GivenUserIsZeroAddress() external {
+        // It should revert with the error {ERC20InvalidReceiver}
+        uint256 amount = TOKEN_1 * 100_000;
+        deal(address(rewardToken), users.alice, amount);
+
+        vm.startPrank(users.alice);
+        rewardToken.approve(address(lockbox), amount);
+
+        lockbox.deposit(amount);
+
+        xVelo.approve(address(lockbox), amount);
+
+        vm.expectRevert(
+            abi.encode(IERC20Errors.ERC20InvalidReceiver.selector, address(0))
+        );
+        lockbox.withdrawTo(address(0), amount);
     }
 
     function testGas() external {
