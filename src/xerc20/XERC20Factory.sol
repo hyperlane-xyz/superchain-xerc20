@@ -7,6 +7,8 @@ import {XERC20} from "./XERC20.sol";
 import {IXERC20Factory} from "../interfaces/xerc20/IXERC20Factory.sol";
 import {XERC20Lockbox} from "./XERC20Lockbox.sol";
 import {CreateXLibrary} from "../libraries/CreateXLibrary.sol";
+import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
 /*
 
@@ -67,15 +69,22 @@ contract XERC20Factory is IXERC20Factory {
     function deployXERC20() external virtual returns (address _XERC20) {
         if (block.chainid == 42220) revert InvalidChainId();
 
+        address implementation = address(
+            new XERC20(
+                address(0) // no lockbox
+            )
+        );
+
+        ProxyAdmin proxyAdmin = new ProxyAdmin(owner);
+
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
             initCode: abi.encodePacked(
-                type(XERC20).creationCode,
+                type(TransparentUpgradeableProxy).creationCode,
                 abi.encode(
-                    name, // name of xerc20
-                    symbol, // symbol of xerc20
-                    owner, // owner of xerc20
-                    address(0) // no lockbox
+                    implementation, // logic
+                    address(proxyAdmin), // proxy admin
+                    abi.encodeCall(XERC20.initialize, (name, symbol, owner))
                 )
             )
         });
@@ -100,15 +109,16 @@ contract XERC20Factory is IXERC20Factory {
             )
         });
 
+        address implementation = address(new XERC20(_lockbox));
+
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
             initCode: abi.encodePacked(
-                type(XERC20).creationCode,
+                type(TransparentUpgradeableProxy).creationCode,
                 abi.encode(
-                    name, // name of xerc20
-                    symbol, // symbol of xerc20
-                    owner, // owner of xerc20
-                    _lockbox // lockbox corresponding to xerc20
+                    implementation, // logic
+                    owner, // initialOwner
+                    abi.encodeCall(XERC20.initialize, (name, symbol, owner))
                 )
             )
         });

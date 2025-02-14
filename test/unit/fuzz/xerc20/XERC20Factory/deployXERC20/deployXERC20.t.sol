@@ -14,7 +14,7 @@ contract DeployXERC20UnitFuzzTest is XERC20FactoryTest {
         _;
     }
 
-    function testFuzz_GivenChainIdIsNot10(uint8 chainId) external givenXERC20NotYetDeployed {
+    function testFuzz_GivenChainIdIsNot42220(uint8 chainId) external givenXERC20NotYetDeployed {
         // It should create a new XERC20 instance
         // It should set the name and symbol of the new XERC20 instance
         // It should set the owner of the new XERC20 instance to the factory
@@ -33,7 +33,6 @@ contract DeployXERC20UnitFuzzTest is XERC20FactoryTest {
         vm.expectEmit(address(xFactory));
         emit IXERC20Factory.DeployXERC20({_xerc20: expectedTokenAddress});
         address xerc20 = xFactory.deployXERC20();
-
         assertEq(xerc20, expectedTokenAddress);
         assertEq(IERC20Metadata(xerc20).name(), "Super USDT");
         assertEq(IERC20Metadata(xerc20).symbol(), "USDT");

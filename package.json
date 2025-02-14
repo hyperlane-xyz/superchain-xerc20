@@ -18,6 +18,5 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hyperlane-xyz/core": "4.1.0"
   }
 }
