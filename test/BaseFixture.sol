@@ -11,6 +11,7 @@ import {SafeCast} from "@openzeppelin5/contracts/utils/math/SafeCast.sol";
 import {Ownable} from "@openzeppelin5/contracts/access/Ownable.sol";
 import {Math} from "@openzeppelin5/contracts/utils/math/Math.sol";
 import {Clones} from "@openzeppelin5/contracts/proxy/Clones.sol";
+import {ERC1967Utils} from "@openzeppelin5/contracts/proxy/ERC1967/ERC1967Utils.sol";
 
 import {ICrosschainERC20, ISuperchainERC20, IXERC20, XERC20} from "src/xerc20/XERC20.sol";
 import {IXERC20Lockbox, XERC20Lockbox} from "src/xerc20/XERC20Lockbox.sol";
@@ -76,6 +77,12 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
         lockbox = XERC20Lockbox(_lockbox);
 
         labelContracts();
+    }
+
+    function _admin() internal view returns (address) {
+        bytes32 adminSlot = ERC1967Utils.ADMIN_SLOT;
+        bytes32 value = vm.load(address(xVelo), adminSlot);
+        return address(uint160(uint256(value)));
     }
 
     function labelContracts() public virtual {
