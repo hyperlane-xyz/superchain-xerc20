@@ -1,0 +1,16 @@
+MintingCurrentLimitOfUnitConcreteTest
+├── When buffer stored is smaller than midpoint
+│   ├── When sum of buffer stored and accrued limits is smaller than midpoint
+│   │   └── It should return sum of buffer stored and accrued limits
+│   └── When sum of buffer stored and accrued limits is greater than or equal to midpoint
+│       └── It should return midpoint
+├── When buffer stored is greater than midpoint
+│   ├── When accrued limits are greater than buffer stored
+│   │   └── It should return midpoint
+│   └── When accrued limits are smaller than or equal to buffer stored
+│       ├── When the difference between buffer stored and accrued limits is smaller than midpoint
+│       │   └── It should return midpoint
+│       └── When the difference between buffer stored and accrued limits is greater than or equal to midpoint
+│           └── It should return the difference between buffer stored and accrued limits
+└── When buffer stored is equal to midpoint
+    └── It should return buffer stored

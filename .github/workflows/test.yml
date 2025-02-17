@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: CI
 
 on: [push]
@@ -42,10 +43,51 @@ jobs:
         with:
           submodules: recursive
 
+=======
+name: test
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  check:
+    strategy:
+      fail-fast: true
+
+    name: Foundry project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+  
+      # Runs a single command using the runners shell
+>>>>>>> decimals
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
+<<<<<<< HEAD
 
       - name: Install forge dependencies
         run: forge install
@@ -108,3 +150,18 @@ jobs:
   #       with:
   #         files: ./coverage/lcov.info
   #         flags: production
+=======
+  
+      - name: Install deps
+        run: forge install
+
+      - name: Run Forge tests
+        run: |
+          forge test -vvv
+        id: test
+        env: 
+          OPTIMISM_RPC_URL: ${{ secrets.OPTIMISM_RPC_URL }}
+          BOB_RPC_URL: ${{ secrets.BOB_RPC_URL }}
+          MODE_RPC_URL: ${{ secrets.MODE_RPC_URL }}
+          PRIVATE_KEY_DEPLOY: ${{ secrets.PRIVATE_KEY_DEPLOY }}
+>>>>>>> decimals

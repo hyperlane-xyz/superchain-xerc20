@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # General
 yarn-error.log
 node_modules
@@ -23,3 +24,20 @@ broadcast/**
 
 # Coverage
 lcov.info
+=======
+.env
+
+# Foundry
+cache/
+out/
+broadcast/
+
+# JS
+node_modules/
+package-lock.json
+
+# Coverage
+lcov.info
+
+.DS_Store
+>>>>>>> decimals
