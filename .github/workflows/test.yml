@@ -53,3 +53,16 @@ jobs:
           BOB_RPC_URL: ${{ secrets.BOB_RPC_URL }}
           MODE_RPC_URL: ${{ secrets.MODE_RPC_URL }}
           PRIVATE_KEY_DEPLOY: ${{ secrets.PRIVATE_KEY_DEPLOY }}
+
+      - name: Run tests with coverage
+        run: |
+          forge coverage \
+            --report lcov \
+            --report summary \
+            --no-match-coverage "(test|mock|node_modules|script)" \
+            --ir-minimum # https://github.com/foundry-rs/foundry/issues/3357
+
+      - name: Upload coverage reports to Codecov with GitHub Action
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
