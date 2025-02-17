@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: true
 
-    name: Foundry project
+    name: Foundry test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -68,7 +68,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   static-analysis:
-    name: Foundry project
+    name: Slither
     runs-on: ubuntu-latest
 
     steps:
