@@ -115,7 +115,7 @@ contract XERC20Factory is IXERC20Factory {
                 type(TransparentUpgradeableProxy).creationCode,
                 abi.encode(
                     implementation, // logic
-                    address(owner), // proxy admin
+                    address(owner), // initial owner of proxy admin
                     abi.encodeCall(XERC20.initialize, (name, symbol, owner))
                 )
             )
