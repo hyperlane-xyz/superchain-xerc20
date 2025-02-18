@@ -7,6 +7,8 @@ import {XERC20} from "./XERC20.sol";
 import {IXERC20Factory} from "../interfaces/xerc20/IXERC20Factory.sol";
 import {XERC20Lockbox} from "./XERC20Lockbox.sol";
 import {CreateXLibrary} from "../libraries/CreateXLibrary.sol";
+import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
 /*
 
@@ -36,7 +38,7 @@ import {CreateXLibrary} from "../libraries/CreateXLibrary.sol";
 /// @title XERC20Factory
 /// @notice Deploys a canonical XERC20 on each chain
 /// @dev Depends on CreateX, assumes bytecode for CreateX has already been checked prior to deployment
-/// @dev Supports 18 decimal tokens only. Pass in the erc20 address on root to create a lockbox for it.
+/// @dev Supports 6 decimal tokens only. Pass in the erc20 address on root to create a lockbox for it.
 contract XERC20Factory is IXERC20Factory {
     using CreateXLibrary for bytes11;
 
@@ -46,9 +48,9 @@ contract XERC20Factory is IXERC20Factory {
     address public immutable erc20;
 
     /// @inheritdoc IXERC20Factory
-    string public constant name = "Superchain Velodrome";
+    string public constant name = "Super USDT";
     /// @inheritdoc IXERC20Factory
-    string public constant symbol = "XVELO";
+    string public constant symbol = "USDT";
 
     /// @inheritdoc IXERC20Factory
     bytes11 public constant XERC20_ENTROPY = 0x0000000000000000000000;
@@ -65,17 +67,24 @@ contract XERC20Factory is IXERC20Factory {
 
     /// @inheritdoc IXERC20Factory
     function deployXERC20() external virtual returns (address _XERC20) {
-        if (block.chainid == 10) revert InvalidChainId();
+        if (block.chainid == 42220) revert InvalidChainId();
+
+        address implementation = address(
+            new XERC20(
+                address(0) // no lockbox
+            )
+        );
+
+        ProxyAdmin proxyAdmin = new ProxyAdmin(owner);
 
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
             initCode: abi.encodePacked(
-                type(XERC20).creationCode,
+                type(TransparentUpgradeableProxy).creationCode,
                 abi.encode(
-                    name, // name of xerc20
-                    symbol, // symbol of xerc20
-                    owner, // owner of xerc20
-                    address(0) // no lockbox
+                    implementation, // logic
+                    address(proxyAdmin), // proxy admin
+                    abi.encodeCall(XERC20.initialize, (name, symbol, owner))
                 )
             )
         });
@@ -85,7 +94,7 @@ contract XERC20Factory is IXERC20Factory {
 
     /// @inheritdoc IXERC20Factory
     function deployXERC20WithLockbox() external returns (address _XERC20, address _lockbox) {
-        if (block.chainid != 10) revert InvalidChainId();
+        if (block.chainid != 42220) revert InvalidChainId();
 
         address expectedAddress = XERC20_ENTROPY.computeCreate3Address({_deployer: address(this)});
 
@@ -100,15 +109,18 @@ contract XERC20Factory is IXERC20Factory {
             )
         });
 
+        address implementation = address(new XERC20(_lockbox));
+
+        ProxyAdmin proxyAdmin = new ProxyAdmin(owner);
+
         _XERC20 = CreateXLibrary.CREATEX.deployCreate3({
             salt: XERC20_ENTROPY.calculateSalt({_deployer: address(this)}),
             initCode: abi.encodePacked(
-                type(XERC20).creationCode,
+                type(TransparentUpgradeableProxy).creationCode,
                 abi.encode(
-                    name, // name of xerc20
-                    symbol, // symbol of xerc20
-                    owner, // owner of xerc20
-                    _lockbox // lockbox corresponding to xerc20
+                    implementation, // logic
+                    address(proxyAdmin), // proxy admin
+                    abi.encodeCall(XERC20.initialize, (name, symbol, owner))
                 )
             )
         });

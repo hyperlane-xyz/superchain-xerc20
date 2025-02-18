@@ -6,5 +6,5 @@ openzeppelin-contracts/=lib/openzeppelin-contracts/
 createX/=lib/createX/src/
 @nomad-xyz/=lib/ExcessivelySafeCall/
 @hyperlane/=node_modules/@hyperlane-xyz/
-@openzeppelin/contracts/=node_modules/@openzeppelin/contracts
-@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/
+@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
+@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/

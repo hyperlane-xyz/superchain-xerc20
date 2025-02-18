@@ -11,6 +11,7 @@ import {SafeCast} from "@openzeppelin5/contracts/utils/math/SafeCast.sol";
 import {Ownable} from "@openzeppelin5/contracts/access/Ownable.sol";
 import {Math} from "@openzeppelin5/contracts/utils/math/Math.sol";
 import {Clones} from "@openzeppelin5/contracts/proxy/Clones.sol";
+import {ERC1967Utils} from "@openzeppelin5/contracts/proxy/ERC1967/ERC1967Utils.sol";
 
 import {ICrosschainERC20, ISuperchainERC20, IXERC20, XERC20} from "src/xerc20/XERC20.sol";
 import {IXERC20Lockbox, XERC20Lockbox} from "src/xerc20/XERC20Lockbox.sol";
@@ -36,9 +37,6 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
 
     /// tokens
     TestERC20 public rewardToken;
-    TestERC20 public token0;
-    TestERC20 public token1;
-    MockWETH public weth;
 
     /// mocks
     CreateX public cx = CreateX(0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed);
@@ -49,23 +47,16 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
     Users internal users;
 
     function setUp() public virtual {
-        // tests run as if chain id is 10 (optimism)
-        vm.chainId(10);
+        // tests run as if chain id is 42220 (celo)
+        vm.chainId(42220);
 
         createUsers();
 
         // run deployments as address(this)
         // at end of deployment, address(this) should have no ownership
-        rewardToken = new TestERC20("Reward Token", "RWRD", 18);
-
-        TestERC20 tokenA = new TestERC20("Test Token A", "TTA", 18);
-        TestERC20 tokenB = new TestERC20("Test Token B", "TTB", 6); // mimic USDC
-        weth = new MockWETH();
-        (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+        rewardToken = new TestERC20("Reward Token", "RWRD", 6);
 
         deployCreateX();
-
-        console.logAddress(users.owner);
 
         address deployer = users.deployer;
         xFactory = XERC20Factory(
@@ -86,6 +77,12 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
         lockbox = XERC20Lockbox(_lockbox);
 
         labelContracts();
+    }
+
+    function _admin() internal view returns (address) {
+        bytes32 adminSlot = ERC1967Utils.ADMIN_SLOT;
+        bytes32 value = vm.load(address(xVelo), adminSlot);
+        return address(uint160(uint256(value)));
     }
 
     function labelContracts() public virtual {

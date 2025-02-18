@@ -9,15 +9,14 @@ ROOT_X_LOCKBOX=
 RATE_LIMIT_LIBRARY=
 
 # V2 Constants
-WETH="0x4200000000000000000000000000000000000006"
-VELO="0x9560e827aF36c94D2Ac33a39bCE1Fe78631088Db"
+USDT="0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e"
 TOKEN_ADMIN="0x0000000000000000000000000000000000000001"
 
 # ENV Variables
 source .env
-ETHERSCAN_API_KEY=$OPTIMISM_ETHERSCAN_API_KEY
-ETHERSCAN_VERIFIER_URL=$OPTIMISM_ETHERSCAN_VERIFIER_URL
-CHAIN_ID=10
+ETHERSCAN_API_KEY=$CELO_ETHERSCAN_API_KEY
+ETHERSCAN_VERIFIER_URL=$CELO_ETHERSCAN_VERIFIER_URL
+CHAIN_ID=42220
 
 # XERC20Factory
 forge verify-contract \
@@ -26,7 +25,7 @@ forge verify-contract \
     --chain-id $CHAIN_ID \
     --num-of-optimizations 200 \
     --watch \
-    --constructor-args $(cast ae "constructor(address,address)()" $TOKEN_ADMIN $VELO) \
+    --constructor-args $(cast ae "constructor(address,address)()" $TOKEN_ADMIN $USDT) \
     --compiler-version "v0.8.27" \
     --etherscan-api-key $ETHERSCAN_API_KEY \
     --verifier-url $ETHERSCAN_VERIFIER_URL \
@@ -39,7 +38,7 @@ forge verify-contract \
     --chain-id $CHAIN_ID \
     --num-of-optimizations 200 \
     --watch \
-    --constructor-args $(cast ae "constructor(string,string,address,address)()" "Superchain Velodrome" "XVELO" $TOKEN_ADMIN $ROOT_X_LOCKBOX) \
+    --constructor-args $(cast ae "constructor(string,string,address,address)()" "Super USDT" "USDT" $TOKEN_ADMIN $ROOT_X_LOCKBOX) \
     --compiler-version "v0.8.27" \
     --etherscan-api-key $ETHERSCAN_API_KEY \
     --verifier-url $ETHERSCAN_VERIFIER_URL \
@@ -52,7 +51,7 @@ forge verify-contract \
     --chain-id $CHAIN_ID \
     --num-of-optimizations 200 \
     --watch \
-    --constructor-args $(cast ae "constructor(address,address)()" $ROOT_X_ERC20 $VELO) \
+    --constructor-args $(cast ae "constructor(address,address)()" $ROOT_X_ERC20 $USDT) \
     --compiler-version "v0.8.27" \
     --etherscan-api-key $ETHERSCAN_API_KEY \
     --verifier-url $ETHERSCAN_VERIFIER_URL
