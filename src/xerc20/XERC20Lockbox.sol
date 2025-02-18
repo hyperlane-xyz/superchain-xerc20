@@ -52,19 +52,19 @@ contract XERC20Lockbox is IXERC20Lockbox {
     }
 
     /// @inheritdoc IXERC20Lockbox
-    function deposit(uint256 _amount) external {
+    function deposit(uint256 _amount) public virtual {
         ERC20.safeTransferFrom(msg.sender, address(this), _amount);
         XERC20.mint(msg.sender, _amount);
         emit Deposit(msg.sender, _amount);
     }
 
     /// @inheritdoc IXERC20Lockbox
-    function withdraw(uint256 _amount) external {
+    function withdraw(uint256 _amount) public virtual {
         _withdraw(msg.sender, _amount);
     }
 
     /// @inheritdoc IXERC20Lockbox
-    function withdrawTo(address _to, uint256 _amount) external {
+    function withdrawTo(address _to, uint256 _amount) public virtual {
         _withdraw(_to, _amount);
     }
 
