@@ -4,10 +4,11 @@ pragma solidity >=0.8.19 <0.9.0;
 import "../XERC20Lockbox.t.sol";
 
 contract WithdrawToUnitFuzzTest is XERC20LockboxTest {
-    function test_GivenAnyAmount(uint256 _depositAmount, uint256 _withdrawAmount, address _user) external {
+    function testFuzz_GivenAnyAmount(uint256 _depositAmount, uint256 _withdrawAmount, address _user) external {
         // It should burn the amount of XERC20 tokens from the caller
         // It should transfer the amount of ERC20 tokens from the lockbox to the caller
         // It should emit a {Withdraw} event
+        vm.assume(_user != address(0) && _user != address(lockbox));
         uint256 depositAmount = bound(_depositAmount, 1, MAX_TOKENS);
         uint256 withdrawAmount = bound(_withdrawAmount, 1, depositAmount);
         deal(address(rewardToken), users.alice, depositAmount);

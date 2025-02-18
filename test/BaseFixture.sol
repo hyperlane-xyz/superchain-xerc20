@@ -47,7 +47,7 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
     Users internal users;
 
     function setUp() public virtual {
-        // tests run as if chain id is 10 (optimism)
+        // tests run as if chain id is 42220 (celo)
         vm.chainId(42220);
 
         createUsers();

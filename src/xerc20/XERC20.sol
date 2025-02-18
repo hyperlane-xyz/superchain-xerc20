@@ -79,10 +79,6 @@ contract XERC20 is
         __Ownable_init(_owner);
     }
 
-    function decimals() public view virtual override returns (uint8) {
-        return 6;
-    }
-
     modifier onlySuperchainERC20Bridge() {
         if (msg.sender != SUPERCHAIN_ERC20_BRIDGE) revert OnlySuperchainERC20Bridge();
         _;
@@ -122,6 +118,11 @@ contract XERC20 is
     /// @inheritdoc IXERC20
     function removeBridge(address _bridge) external onlyOwner {
         _removeLimit(_bridge);
+    }
+
+    /// @inheritdoc ERC20Upgradeable
+    function decimals() public view virtual override returns (uint8) {
+        return 6;
     }
 
     /// @inheritdoc IXERC20
