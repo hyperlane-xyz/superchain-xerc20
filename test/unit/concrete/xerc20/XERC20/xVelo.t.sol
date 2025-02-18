@@ -11,7 +11,7 @@ contract xVeloUnitTest is XERC20Test {
     uint112 public bufferCap;
     SigUtils public sigUtils;
 
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
 
         sigUtils = new SigUtils(xVelo.DOMAIN_SEPARATOR());
