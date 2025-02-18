@@ -3,4 +3,8 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import "test/BaseFixture.sol";
 
-abstract contract XERC20Test is BaseFixture {}
+abstract contract XERC20Test is BaseFixture {
+    function test_decimals() external {
+        assertEq(xVelo.decimals(), 6);
+    }
+}

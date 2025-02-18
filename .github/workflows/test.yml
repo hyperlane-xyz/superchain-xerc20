@@ -38,8 +38,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
   
       - name: Install deps
         run: forge install
@@ -59,13 +57,13 @@ jobs:
           forge coverage \
             --report lcov \
             --report summary \
-            --no-match-coverage "(test|mock|node_modules|script)" \
-            --ir-minimum # https://github.com/foundry-rs/foundry/issues/3357
+            --no-match-coverage "(test|mock|node_modules|script)"
 
       - name: Upload coverage reports to Codecov with GitHub Action
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
 
   static-analysis:
     name: Slither

@@ -7,7 +7,7 @@ contract DeployXERC20WithLockboxUnitFuzzTest is XERC20FactoryTest {
     function setUp() public override {
         super.setUp();
 
-        // chain is already optimism
+        // chain is already celo
 
         vm.startPrank(users.alice);
     }
@@ -16,7 +16,7 @@ contract DeployXERC20WithLockboxUnitFuzzTest is XERC20FactoryTest {
         _;
     }
 
-    function testFuzz_GivenChainIdIsNot10(uint8 chainId) external givenXERC20NotYetDeployed {
+    function testFuzz_GivenChainIdIsNot42220(uint8 chainId) external givenXERC20NotYetDeployed {
         // It should revert with {InvalidChainId}
         vm.assume(chainId != 42220);
         vm.chainId(chainId);
