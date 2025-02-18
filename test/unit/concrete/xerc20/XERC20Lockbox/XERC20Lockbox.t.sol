@@ -7,5 +7,7 @@ abstract contract XERC20LockboxTest is BaseFixture {
     function testInitialState() public view {
         assertEq(address(lockbox.ERC20()), address(rewardToken));
         assertEq(address(lockbox.XERC20()), address(xVelo));
+
+        assertEq(Ownable(_admin()).owner(), users.owner);
     }
 }
