@@ -10,16 +10,28 @@ import {ManagedXERC20Lockbox} from "src/xerc20/ManagedXERC20Lockbox.sol";
 contract ManagedXERC20LockboxTest is BaseFixture {
     using SafeCast for uint256;
 
+    bytes32 MANAGER = keccak256("MANAGER");
+    bytes32 DEFAULT_ADMIN_ROLE = 0x00;
+
     address public manager;
+    address public admin;
+
     ManagedXERC20Lockbox public managedLockbox;
 
     function setUp() public override {
         super.setUp();
-        managedLockbox = new ManagedXERC20Lockbox(address(xVelo), address(rewardToken));
 
         manager = makeAddr("manager");
+        admin = makeAddr("admin");
 
-        managedLockbox.grantRole(managedLockbox.MANAGER(), manager);
+        managedLockbox = new ManagedXERC20Lockbox(
+            address(xVelo),
+            address(rewardToken),
+            admin
+        );
+
+        vm.prank(admin);
+        managedLockbox.grantRole(MANAGER, manager);
 
         uint112 bufferCap = (TOKEN_1 * 5_000).toUint112();
         uint128 rateLimitPerSecond = ((bufferCap / 2) / DAY).toUint128(); // replenish limits in 1 day
@@ -37,24 +49,32 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     function test_initialState() public view {
         assertEq(address(managedLockbox.ERC20()), address(rewardToken));
         assertEq(address(managedLockbox.XERC20()), address(xVelo));
-        assertEq(managedLockbox.hasRole(managedLockbox.DEFAULT_ADMIN_ROLE(), address(this)), true);
-        assertEq(managedLockbox.hasRole(managedLockbox.MANAGER(), manager), true);
+        assertEq(managedLockbox.hasRole(DEFAULT_ADMIN_ROLE, admin), true);
+        assertEq(managedLockbox.hasRole(MANAGER, manager), true);
     }
 
     function test_enableDeposits() public {
-        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
+        vm.expectPartialRevert(
+            IAccessControl.AccessControlUnauthorizedAccount.selector
+        );
         managedLockbox.enableDeposits();
 
-        vm.prank(manager);
+        vm.expectEmit();
+        emit ManagedXERC20Lockbox.DepositsEnabled();
+        vm.prank(admin);
         managedLockbox.enableDeposits();
         assertEq(managedLockbox.depositsEnabled(), true);
     }
 
     function test_disableDeposits() public {
-        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
+        vm.expectPartialRevert(
+            IAccessControl.AccessControlUnauthorizedAccount.selector
+        );
         managedLockbox.disableDeposits();
 
-        vm.prank(manager);
+        vm.expectEmit();
+        emit ManagedXERC20Lockbox.DepositsDisabled();
+        vm.prank(admin);
         managedLockbox.disableDeposits();
         assertEq(managedLockbox.depositsEnabled(), false);
     }
@@ -65,14 +85,14 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         vm.prank(users.alice);
         rewardToken.approve(address(managedLockbox), amount);
 
-        vm.prank(manager);
+        vm.prank(admin);
         managedLockbox.disableDeposits();
 
         vm.prank(users.alice);
         vm.expectRevert("Deposits are disabled");
         managedLockbox.deposit(amount);
 
-        vm.prank(manager);
+        vm.prank(admin);
         managedLockbox.enableDeposits();
 
         vm.prank(users.alice);
@@ -90,7 +110,9 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         vm.stopPrank();
 
         vm.prank(users.alice);
-        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
+        vm.expectPartialRevert(
+            IAccessControl.AccessControlUnauthorizedAccount.selector
+        );
         managedLockbox.withdraw(amount);
     }
 
@@ -105,7 +127,9 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         vm.stopPrank();
 
         vm.prank(users.alice);
-        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
+        vm.expectPartialRevert(
+            IAccessControl.AccessControlUnauthorizedAccount.selector
+        );
         managedLockbox.withdrawTo(users.bob, amount);
     }
 }
