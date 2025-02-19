@@ -85,6 +85,12 @@ abstract contract BaseFixture is Test, TestConstants, GasSnapshot {
         return address(uint160(uint256(value)));
     }
 
+    function _implementation() internal view returns (address) {
+        bytes32 implementationSlot = ERC1967Utils.IMPLEMENTATION_SLOT;
+        bytes32 value = vm.load(address(xVelo), implementationSlot);
+        return address(uint160(uint256(value)));
+    }
+
     function labelContracts() public virtual {
         vm.label(address(cx), "CreateX");
         vm.label(address(xVelo), "Superchain Velodrome");
