@@ -10,8 +10,8 @@ import {ManagedXERC20Lockbox} from "src/xerc20/ManagedXERC20Lockbox.sol";
 contract ManagedXERC20LockboxTest is BaseFixture {
     using SafeCast for uint256;
 
-    bytes32 MANAGER = keccak256("MANAGER");
-    bytes32 DEFAULT_ADMIN_ROLE = 0x00;
+    bytes32 constant MANAGER = keccak256("MANAGER");
+    bytes32 constant DEFAULT_ADMIN_ROLE = 0x00;
 
     address public manager;
     address public admin;
@@ -91,6 +91,17 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         managedLockbox.deposit(amount);
     }
 
+    function test_deposit_revertsWhenRateLimited() public {
+        uint256 amount = TOKEN_1 * 5_000;
+        deal(address(rewardToken), users.alice, amount);
+        vm.startPrank(users.alice);
+        rewardToken.approve(address(managedLockbox), amount);
+
+        vm.expectRevert("RateLimited: rate limit hit");
+        managedLockbox.deposit(amount);
+        vm.stopPrank();
+    }
+
     function test_withdraw() public {
         uint256 amount = TOKEN_1 * 1_000;
         deal(address(xVelo), manager, amount);
@@ -106,6 +117,16 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         managedLockbox.withdraw(amount);
     }
 
+    function test_withdraw_revertsWhenRateLimited() public {
+        uint256 amount = TOKEN_1 * 5_000;
+
+        vm.startPrank(manager);
+        xVelo.approve(address(managedLockbox), amount);
+        vm.expectRevert("RateLimited: buffer cap overflow");
+        managedLockbox.withdraw(amount);
+        vm.stopPrank();
+    }
+
     function test_withdrawTo() public {
         uint256 amount = TOKEN_1 * 1_000;
         deal(address(xVelo), manager, amount);
@@ -119,5 +140,15 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         vm.prank(users.alice);
         vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
         managedLockbox.withdrawTo(users.bob, amount);
+    }
+
+    function test_withdrawTo_revertsWhenRateLimited() public {
+        uint256 amount = TOKEN_1 * 5_000;
+
+        vm.startPrank(manager);
+        xVelo.approve(address(managedLockbox), amount);
+        vm.expectRevert("RateLimited: buffer cap overflow");
+        managedLockbox.withdrawTo(users.alice, amount);
+        vm.stopPrank();
     }
 }
