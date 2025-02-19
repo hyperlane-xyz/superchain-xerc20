@@ -8,7 +8,6 @@ import {IXERC20Factory} from "../interfaces/xerc20/IXERC20Factory.sol";
 import {XERC20Lockbox} from "./XERC20Lockbox.sol";
 import {CreateXLibrary} from "../libraries/CreateXLibrary.sol";
 import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
-import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
 /*
 

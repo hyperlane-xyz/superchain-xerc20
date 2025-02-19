@@ -11,6 +11,8 @@ abstract contract XERC20LockboxTest is BaseFixture {
         assertEq(address(lockbox.XERC20()), address(xVelo));
 
         assertEq(ProxyAdmin(_admin()).owner(), users.owner);
+        assertNotEq(_implementation(), address(xVelo));
+        assertNotEq(_implementation(), address(0));
     }
 
     function test_upgrade(address lockbox) public {
