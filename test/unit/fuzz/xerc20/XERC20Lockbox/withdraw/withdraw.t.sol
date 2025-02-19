@@ -3,7 +3,7 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import "../XERC20Lockbox.t.sol";
 
-contract WithdrawUnitConcreteTest is XERC20LockboxTest {
+contract WithdrawUnitFuzzTest is XERC20LockboxTest {
     function test_GivenAnyAmount(uint256 _depositAmount, uint256 _withdrawAmount) external {
         // It should burn the amount of XERC20 tokens from the caller
         // It should transfer the amount of ERC20 tokens from the lockbox to the caller
