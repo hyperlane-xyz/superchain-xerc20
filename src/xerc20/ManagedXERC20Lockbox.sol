@@ -12,11 +12,7 @@ contract ManagedXERC20Lockbox is XERC20Lockbox, AccessControl {
 
     bool public depositsEnabled = true;
 
-    constructor(
-        address _xerc20,
-        address _erc20,
-        address _admin
-    ) XERC20Lockbox(_xerc20, _erc20) {
+    constructor(address _xerc20, address _erc20, address _admin) XERC20Lockbox(_xerc20, _erc20) {
         _grantRole(DEFAULT_ADMIN_ROLE, _admin);
     }
 
@@ -47,10 +43,7 @@ contract ManagedXERC20Lockbox is XERC20Lockbox, AccessControl {
 
     /// @inheritdoc XERC20Lockbox
     /// @dev Only the manager can withdraw to
-    function withdrawTo(
-        address _to,
-        uint256 _amount
-    ) public override onlyRole(MANAGER) {
+    function withdrawTo(address _to, uint256 _amount) public override onlyRole(MANAGER) {
         XERC20Lockbox.withdrawTo(_to, _amount);
     }
 }

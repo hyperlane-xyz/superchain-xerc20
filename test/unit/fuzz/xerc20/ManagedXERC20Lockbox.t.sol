@@ -24,11 +24,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         manager = makeAddr("manager");
         admin = makeAddr("admin");
 
-        managedLockbox = new ManagedXERC20Lockbox(
-            address(xVelo),
-            address(rewardToken),
-            admin
-        );
+        managedLockbox = new ManagedXERC20Lockbox(address(xVelo), address(rewardToken), admin);
 
         vm.prank(admin);
         managedLockbox.grantRole(MANAGER, manager);
@@ -54,9 +50,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     }
 
     function test_enableDeposits() public {
-        vm.expectPartialRevert(
-            IAccessControl.AccessControlUnauthorizedAccount.selector
-        );
+        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
         managedLockbox.enableDeposits();
 
         vm.expectEmit();
@@ -67,9 +61,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     }
 
     function test_disableDeposits() public {
-        vm.expectPartialRevert(
-            IAccessControl.AccessControlUnauthorizedAccount.selector
-        );
+        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
         managedLockbox.disableDeposits();
 
         vm.expectEmit();
@@ -110,9 +102,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         vm.stopPrank();
 
         vm.prank(users.alice);
-        vm.expectPartialRevert(
-            IAccessControl.AccessControlUnauthorizedAccount.selector
-        );
+        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
         managedLockbox.withdraw(amount);
     }
 
@@ -127,9 +117,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         vm.stopPrank();
 
         vm.prank(users.alice);
-        vm.expectPartialRevert(
-            IAccessControl.AccessControlUnauthorizedAccount.selector
-        );
+        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
         managedLockbox.withdrawTo(users.bob, amount);
     }
 }
