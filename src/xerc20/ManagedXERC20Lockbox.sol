@@ -7,26 +7,31 @@ import {AccessControl} from "@openzeppelin5/contracts/access/AccessControl.sol";
 contract ManagedXERC20Lockbox is XERC20Lockbox, AccessControl {
     bytes32 public constant MANAGER = keccak256("MANAGER");
 
+    event DepositsEnabled();
+    event DepositsDisabled();
+
     bool public depositsEnabled = true;
 
-    constructor(address _xerc20, address _erc20) XERC20Lockbox(_xerc20, _erc20) {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    constructor(address _xerc20, address _erc20, address _admin) XERC20Lockbox(_xerc20, _erc20) {
+        _grantRole(DEFAULT_ADMIN_ROLE, _admin);
     }
 
-    modifier depositsAreEnabled() {
+    modifier onlyWhenDepositsEnabled() {
         require(depositsEnabled, "Deposits are disabled");
         _;
     }
 
-    function enableDeposits() external onlyRole(MANAGER) {
+    function enableDeposits() external onlyRole(DEFAULT_ADMIN_ROLE) {
         depositsEnabled = true;
+        emit DepositsEnabled();
     }
 
-    function disableDeposits() external onlyRole(MANAGER) {
+    function disableDeposits() external onlyRole(DEFAULT_ADMIN_ROLE) {
         depositsEnabled = false;
+        emit DepositsDisabled();
     }
 
-    function deposit(uint256 _amount) public override depositsAreEnabled {
+    function deposit(uint256 _amount) public override onlyWhenDepositsEnabled {
         XERC20Lockbox.deposit(_amount);
     }
 
