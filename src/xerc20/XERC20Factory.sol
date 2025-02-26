@@ -47,7 +47,7 @@ contract XERC20Factory is IXERC20Factory {
     address public immutable erc20;
 
     /// @inheritdoc IXERC20Factory
-    string public constant name = "Super USDT";
+    string public constant name = "OpenUSDT";
     /// @inheritdoc IXERC20Factory
     string public constant symbol = "USDT";
 

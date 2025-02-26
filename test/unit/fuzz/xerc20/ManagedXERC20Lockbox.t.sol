@@ -42,6 +42,26 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         );
     }
 
+    function test_maliciousAdmin() public {
+        address maliciousAdmin = makeAddr("maliciousAdmin");
+        vm.prank(admin);
+        managedLockbox.grantRole(DEFAULT_ADMIN_ROLE, maliciousAdmin);
+
+        vm.startPrank(maliciousAdmin);
+        managedLockbox.revokeRole(DEFAULT_ADMIN_ROLE, admin);
+        managedLockbox.revokeRole(MANAGER, manager);
+
+        uint256 amount = TOKEN_1 * 1_000;
+        deal(address(xVelo), manager, amount);
+        deal(address(rewardToken), address(managedLockbox), amount);
+
+        vm.startPrank(manager);
+        xVelo.approve(address(managedLockbox), amount);
+        // Expect revert because manager role was revoked
+        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
+        managedLockbox.withdraw(amount);
+    }
+
     function test_initialState() public view {
         assertEq(address(managedLockbox.ERC20()), address(rewardToken));
         assertEq(address(managedLockbox.XERC20()), address(xVelo));

@@ -3,6 +3,8 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import "./XERC20.t.sol";
 import {SigUtils} from "test/utils/SigUtils.sol";
+import "@openzeppelin5/contracts/proxy/transparent/ProxyAdmin.sol";
+
 
 contract xVeloUnitTest is XERC20Test {
     using SafeCast for uint256;
@@ -230,6 +232,18 @@ contract xVeloUnitTest is XERC20Test {
 
         assertEq(xVelo.allowance(owner, spender), amount, "incorrect allowance");
         assertEq(xVelo.nonces(owner), 1, "incorrect nonce");
+    }
+
+    function test_upgrade(address implementation) public {
+        address newImpl = address(new XERC20(implementation));
+
+        assertNotEq(_implementation(), newImpl);
+
+        vm.startPrank(users.owner);
+        ProxyAdmin(_admin()).upgradeAndCall(ITransparentUpgradeableProxy(address(xVelo)), newImpl, "");
+        vm.stopPrank();
+
+        assertEq(_implementation(), newImpl);
     }
 
     /// --------------------------------------------------------

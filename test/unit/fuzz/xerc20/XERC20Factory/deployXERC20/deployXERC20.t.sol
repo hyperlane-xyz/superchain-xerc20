@@ -34,7 +34,7 @@ contract DeployXERC20UnitFuzzTest is XERC20FactoryTest {
         emit IXERC20Factory.DeployXERC20({_xerc20: expectedTokenAddress});
         address xerc20 = xFactory.deployXERC20();
         assertEq(xerc20, expectedTokenAddress);
-        assertEq(IERC20Metadata(xerc20).name(), "Super USDT");
+        assertEq(IERC20Metadata(xerc20).name(), "OpenUSDT");
         assertEq(IERC20Metadata(xerc20).symbol(), "USDT");
         assertEq(Ownable(xerc20).owner(), users.owner);
         assertEq(XERC20(xerc20).lockbox(), address(0));
