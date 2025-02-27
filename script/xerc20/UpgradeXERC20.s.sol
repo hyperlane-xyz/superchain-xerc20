@@ -4,6 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import {Script, console} from "forge-std/src/Script.sol";
 import {ManagedXERC20Lockbox} from "src/xerc20/ManagedXERC20Lockbox.sol";
 import {XERC20} from "src/xerc20/XERC20.sol";
+import {XERC20Lockbox} from "src/xerc20/XERC20Lockbox.sol";
 import {ProxyAdmin} from "@openzeppelin5/contracts/proxy/transparent/ProxyAdmin.sol";
 import {ITransparentUpgradeableProxy} from "@openzeppelin5/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
@@ -96,15 +97,40 @@ contract UpgradeXERC20 is Script {
 
         require(proxiedXERC20.lockbox() == lockbox, "Lockbox mismatch");
 
+        limits = proxiedXERC20.rateLimits(warpRouteAddress);
+        if (limits.bufferCap == 0) {
+            // Skip warp route test if the rate limit is not set
+            return limits;
+        }
+
         // Test that the warp route can transfer
-        vm.prank(lockbox);
-        proxiedXERC20.mint(address(this), 1);
-        vm.stopPrank();
-        proxiedXERC20.approve(warpRouteAddress, 1);
-        uint256 gasPayment = WarpRoute(warpRouteAddress).quoteGasPayment(42220);
+
+        uint32 destinationDomain = block.chainid == 42220 ? 8453 : 42220;
+
+        if (block.chainid == 42220) {
+            // to base
+            XERC20Lockbox xerc20Lockbox = XERC20Lockbox(lockbox);
+            // get the tokens from the lockbox
+            vm.startPrank(lockbox);
+            xerc20Lockbox.XERC20().mint(address(this), 1);
+            vm.stopPrank();
+            ERC20Upgradeable(proxiedXERC20Address).approve(lockbox, 1);
+            xerc20Lockbox.withdraw(1);
+            xerc20Lockbox.ERC20().approve(warpRouteAddress, 1);
+        } else {
+            // to celo
+            vm.prank(lockbox);
+            proxiedXERC20.mint(address(this), 1);
+            proxiedXERC20.approve(warpRouteAddress, 1);
+        }
+        // to celo if non-celo, otherwise to base
+
+        uint256 gasPayment = WarpRoute(warpRouteAddress).quoteGasPayment(
+            destinationDomain
+        );
         vm.deal(address(this), gasPayment);
         WarpRoute(warpRouteAddress).transferRemote{value: gasPayment}(
-            42220,
+            destinationDomain,
             bytes32(uint256(uint160(address(this)))),
             1
         );
