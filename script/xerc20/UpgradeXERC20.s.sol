@@ -234,19 +234,6 @@ contract UpgradeXERC20 is Script {
 
         // Do the upgrade
         vm.startPrank(owner);
-        // Log the calldata for the upgrade
-        // console.log("Run Upgrade: upgradeAndCall(address,address,bytes)");
-        // console.log("proxiedXERC20Address: ", proxiedXERC20Address);
-        // console.log("newImplementation: ", address(newImplementation));
-        // console.log("Calldata:");
-        // console.logBytes(
-        //     abi.encodeWithSignature(
-        //         "upgradeAndCall(address,address,bytes)",
-        //         proxiedXERC20Address,
-        //         address(newImplementation),
-        //         ""
-        //     )
-        // );
 
         makeAndlogCall(
             address(proxyAdmin),
