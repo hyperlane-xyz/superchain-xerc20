@@ -166,6 +166,20 @@ contract UpgradeXERC20 is Script {
             );
     }
 
+    function makeAndlogCall(
+        address _target,
+        string memory _signature,
+        bytes memory _data
+    ) public {
+        console.log("Making call");
+        console.log("Target: ", _target);
+        console.log("Signature: ", _signature);
+        console.log("Calldata: ");
+        console.logBytes(_data);
+        (bool success, bytes memory _returnData) = _target.call(_data);
+        require(success, "Call failed");
+    }
+
     function run() public {
         // This script works roughly in two phases:
         // 1. Assert the current state of the XERC20 contract
@@ -178,7 +192,7 @@ contract UpgradeXERC20 is Script {
         address lockbox = proxiedXERC20.lockbox();
         RateLimitMidPoint memory previousRateLimits = assertInvariants(
             "Super USDT",
-            "oUSDT",
+            "USDT",
             lockbox
         );
 
@@ -234,19 +248,37 @@ contract UpgradeXERC20 is Script {
         //     )
         // );
 
-        proxyAdmin.upgradeAndCall(
-            ITransparentUpgradeableProxy(proxiedXERC20Address),
-            address(temporaryImplementation),
-            ""
+        makeAndlogCall(
+            address(proxyAdmin),
+            "upgradeAndCall(address,address,bytes)",
+            abi.encodeWithSignature(
+                "upgradeAndCall(address,address,bytes)",
+                proxiedXERC20Address,
+                address(temporaryImplementation),
+                ""
+            )
         );
-        ERC20NameSymbolSetter(proxiedXERC20Address).setNameAndSymbol(
-            "OpenUSDT",
-            "oUSDT"
+
+        makeAndlogCall(
+            proxiedXERC20Address,
+            "setNameAndSymbol(string,string)",
+            abi.encodeWithSignature(
+                "setNameAndSymbol(string,string)",
+                "OpenUSDT",
+                "oUSDT"
+            )
         );
-        proxyAdmin.upgradeAndCall(
-            ITransparentUpgradeableProxy(proxiedXERC20Address),
-            oldImplementation,
-            ""
+
+        // Revert back to the old implementation
+        makeAndlogCall(
+            address(proxyAdmin),
+            "upgradeAndCall(address,address,bytes)",
+            abi.encodeWithSignature(
+                "upgradeAndCall(address,address,bytes)",
+                proxiedXERC20Address,
+                oldImplementation,
+                ""
+            )
         );
         vm.stopPrank();
 
