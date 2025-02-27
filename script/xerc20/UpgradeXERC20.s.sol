@@ -178,7 +178,7 @@ contract UpgradeXERC20 is Script {
         address lockbox = proxiedXERC20.lockbox();
         RateLimitMidPoint memory previousRateLimits = assertInvariants(
             "Super USDT",
-            "USDT",
+            "oUSDT",
             lockbox
         );
 
@@ -241,7 +241,7 @@ contract UpgradeXERC20 is Script {
         );
         ERC20NameSymbolSetter(proxiedXERC20Address).setNameAndSymbol(
             "OpenUSDT",
-            "USDT"
+            "oUSDT"
         );
         proxyAdmin.upgradeAndCall(
             ITransparentUpgradeableProxy(proxiedXERC20Address),
@@ -253,7 +253,7 @@ contract UpgradeXERC20 is Script {
         // Post-flight check upgraded contract
         RateLimitMidPoint memory newRateLimits = assertInvariants(
             "OpenUSDT",
-            "USDT",
+            "oUSDT",
             lockbox
         );
         require(

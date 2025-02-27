@@ -8,7 +8,7 @@ import "@openzeppelin5/contracts/proxy/transparent/ProxyAdmin.sol";
 abstract contract XERC20Test is BaseFixture {
     function test_InitialState() public view {
         assertEq(xVelo.name(), "OpenUSDT");
-        assertEq(xVelo.symbol(), "USDT");
+        assertEq(xVelo.symbol(), "oUSDT");
         assertEq(xVelo.owner(), users.owner);
         assertEq(xVelo.lockbox(), address(lockbox));
         assertEq(xVelo.SUPERCHAIN_ERC20_BRIDGE(), SUPERCHAIN_ERC20_BRIDGE);
