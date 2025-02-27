@@ -37,7 +37,8 @@ interface WarpRoute {
 contract ERC20NameSymbolSetter is ERC20Upgradeable, ERC20PermitUpgradeable {
     bytes32 private constant ERC20StorageLocation =
         0x52c63247e1f47db19d5ce0460030c497f067ca4cebf71ba98eeadabe20bace00;
-        bytes32 private constant EIP712StorageLocation = 0xa16a46d94261c7517cc8ff89f61c0ce93598e3c849801011dee649a6a557d100;
+    bytes32 private constant EIP712StorageLocation =
+        0xa16a46d94261c7517cc8ff89f61c0ce93598e3c849801011dee649a6a557d100;
     event NameAndSymbolSet(string name, string symbol);
 
     function getERC20Storage() private pure returns (ERC20Storage storage $) {
@@ -46,7 +47,7 @@ contract ERC20NameSymbolSetter is ERC20Upgradeable, ERC20PermitUpgradeable {
         }
     }
 
-     function getEIP712Storage() private pure returns (EIP712Storage storage $) {
+    function getEIP712Storage() private pure returns (EIP712Storage storage $) {
         assembly {
             $.slot := EIP712StorageLocation
         }
@@ -66,6 +67,11 @@ contract ERC20NameSymbolSetter is ERC20Upgradeable, ERC20PermitUpgradeable {
 }
 
 contract UpgradeXERC20 is Script {
+    using CreateXLibrary for bytes11;
+
+    bytes11 public constant SETTER_ENTROPY = 0x0000000000000011111456;
+    ICreateX public cx = ICreateX(0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed);
+
     address proxiedXERC20Address = vm.envAddress("XERC20");
     XERC20 proxiedXERC20 = XERC20(proxiedXERC20Address);
 
@@ -120,6 +126,20 @@ contract UpgradeXERC20 is Script {
         }
     }
 
+    function getCurrentImplementation() internal view returns (address) {
+        return
+            address(
+                uint160(
+                    uint256(
+                        vm.load(
+                            proxiedXERC20Address,
+                            ERC1967Utils.IMPLEMENTATION_SLOT
+                        )
+                    )
+                )
+            );
+    }
+
     function run() public {
         // This script works roughly in two phases:
         // 1. Assert the current state of the XERC20 contract
@@ -144,21 +164,17 @@ contract UpgradeXERC20 is Script {
         }
 
         // get old implementation
-        address oldImplementation = address(
-            uint160(
-                uint256(
-                    vm.load(
-                        proxiedXERC20Address,
-                        ERC1967Utils.IMPLEMENTATION_SLOT
-                    )
-                )
-            )
-        );
+        address oldImplementation = getCurrentImplementation();
         console.log("Old implementation: ", oldImplementation);
 
         vm.startBroadcast();
-        address temporaryImplementation = address(new ERC20NameSymbolSetter());
-        console.log("New implementation: ", temporaryImplementation);
+        // Use create3 so that the safe proposals are all consistent
+        address temporaryImplementation = cx.deployCreate3(
+            SETTER_ENTROPY.calculateSalt({_deployer: msg.sender}),
+            type(ERC20NameSymbolSetter).creationCode
+        );
+
+        console.log("temporary implementation: ", temporaryImplementation);
         vm.stopBroadcast();
 
         // Gather proxy admin info
@@ -227,17 +243,7 @@ contract UpgradeXERC20 is Script {
         require(previousOwner == proxiedXERC20.owner(), "Owner mismatch");
         // check that the old implementation is the current implementation
         require(
-            oldImplementation ==
-                address(
-                    uint160(
-                        uint256(
-                            vm.load(
-                                proxiedXERC20Address,
-                                ERC1967Utils.IMPLEMENTATION_SLOT
-                            )
-                        )
-                    )
-                ),
+            oldImplementation == getCurrentImplementation(),
             "Implementation mismatch"
         );
         console.log("Upgrade complete");
