@@ -59,8 +59,8 @@ contract DeployXERC20WithLockboxUnitConcreteTest is XERC20FactoryTest {
         (address xerc20, address lockbox) = xFactory.deployXERC20WithLockbox();
 
         assertEq(xerc20, expectedTokenAddress);
-        assertEq(IERC20Metadata(xerc20).name(), "Super USDT");
-        assertEq(IERC20Metadata(xerc20).symbol(), "USDT");
+        assertEq(IERC20Metadata(xerc20).name(), "OpenUSDT");
+        assertEq(IERC20Metadata(xerc20).symbol(), "oUSDT");
         assertEq(Ownable(xerc20).owner(), users.owner);
         assertEq(XERC20(xerc20).lockbox(), address(lockbox));
 
