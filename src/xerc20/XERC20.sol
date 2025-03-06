@@ -80,7 +80,9 @@ contract XERC20 is
     }
 
     modifier onlySuperchainERC20Bridge() {
-        if (msg.sender != SUPERCHAIN_ERC20_BRIDGE) revert OnlySuperchainERC20Bridge();
+        if (msg.sender != SUPERCHAIN_ERC20_BRIDGE) {
+            revert OnlySuperchainERC20Bridge();
+        }
         _;
     }
 
