@@ -10,6 +10,9 @@ contract CrosschainBurnUnitFuzzTest is XERC20Test {
         // It should revert with {OnlySuperchainERC20Bridge}
         vm.assume(_user != SUPERCHAIN_ERC20_BRIDGE);
 
+        // It will revert with {ProxyDeniedAdminAccess} if _user is the admin
+        vm.assume(_user != _admin());
+
         vm.prank(_user);
         vm.expectRevert(ISuperchainERC20.OnlySuperchainERC20Bridge.selector);
         xVelo.crosschainBurn({_from: _user, _amount: TOKEN_1});

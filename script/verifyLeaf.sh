@@ -37,7 +37,7 @@ forge verify-contract \
     --chain-id $CHAIN_ID \
     --num-of-optimizations 200 \
     --watch \
-    --constructor-args $(cast ae "constructor(string,string,address,address)()" "Super USDT" "USDT" $TOKEN_ADMIN $ADDRESS_ZERO) \
+    --constructor-args $(cast ae "constructor(string,string,address,address)()" "OpenUSDT" "oUSDT" $TOKEN_ADMIN $ADDRESS_ZERO) \
     --compiler-version "v0.8.27" \
     --verifier blockscout \
     --verifier-url $ETHERSCAN_VERIFIER_URL \

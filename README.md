@@ -59,19 +59,6 @@ For verifications, fill out the verifier config in `foundry.toml`.
 
 For blockscout verifications, append `--verifier blockscout` after `--verify`
 
-## Integrators
-
-Existing contracts that manage nfts that vote on Velodrome must add support for additional logic in 
-order to be able to participate in Superchain Velodrome.
-
-Some additional information for developers building contracts that interact with Superchain Velodrome:
-- Contracts that wish to vote for a certain chain must explicitly set a rewards recipient for that chain by calling `setRecipient` on
- the `RootVotingRewardsFactory` contract.
-- Users interacting with smart contracts that are voting cross chain must approve a small amount of
- WETH to the `RootMessageBridge` as payment for gas.
-- The token bridge may be sunset in the future in favor of alternate token bridging mechanisms.
-    - The interface will remain the same, but the implementation will change and be deployed as a new contract.
-
 ## xERC20
 
 The xERC20 implementation in this repository has been modified lightly from 
@@ -82,20 +69,26 @@ the moonwell xERC20 implementation to support native Superchain interop in the f
 This project follows the [Apache Foundation](https://infra.apache.org/licensing-howto.html)
 guideline for licensing. See LICENSE and NOTICE files.
 
-## Bug Bounty
-Velodrome has a live bug bounty hosted on ([Immunefi](https://immunefi.com/bounty/velodromefinance/)).
-
 ## Deployments
 
-| Chain      | Addresses          | Deployment Commit |
-|------------|--------------------|-------------------|
-| Optimism   | [Addresses](https://github.com/velodrome-finance/superchain-contracts/blob/main/deployment-addresses/optimism.json)           | [v1.0](https://github.com/velodrome-finance/superchain-contracts/commit/a739cdd788673d5fb08736e456fd8ec15d262dc7)      |
-| Mode       | [Addresses](https://github.com/velodrome-finance/superchain-contracts/blob/main/deployment-addresses/mode.json)           | [v1.0](https://github.com/velodrome-finance/superchain-contracts/commit/a739cdd788673d5fb08736e456fd8ec15d262dc7)      |
-| Lisk       | [Addresses](https://github.com/velodrome-finance/superchain-contracts/blob/main/deployment-addresses/lisk.json)           | [v1.0](https://github.com/velodrome-finance/superchain-contracts/commit/a739cdd788673d5fb08736e456fd8ec15d262dc7)      |
-| Fraxtal    | [Addresses](https://github.com/velodrome-finance/superchain-contracts/blob/main/deployment-addresses/fraxtal.json)           | [v1.0](https://github.com/velodrome-finance/superchain-contracts/commit/a739cdd788673d5fb08736e456fd8ec15d262dc7)      |
-| Metal    | [Addresses](https://github.com/velodrome-finance/superchain-contracts/blob/main/deployment-addresses/metal.json)           | [v1.0](https://github.com/velodrome-finance/superchain-contracts/commit/a739cdd788673d5fb08736e456fd8ec15d262dc7)      | 
-| Superseed  | [Addresses](https://github.com/velodrome-finance/superchain-contracts/blob/main/deployment-addresses/superseed.json)         | [v1.0](https://github.com/velodrome-finance/superchain-contracts/commit/a739cdd788673d5fb08736e456fd8ec15d262dc7)      |
-| Ink      | [Addresses](https://github.com/velodrome-finance/superchain-contracts/blob/main/deployment-addresses/ink.json)           | [v1.0](https://github.com/velodrome-finance/superchain-contracts/commit/a739cdd788673d5fb08736e456fd8ec15d262dc7)      | 
-| Soneium  | [Addresses](https://github.com/velodrome-finance/superchain-contracts/blob/main/deployment-addresses/soneium.json)           | [v1.0](https://github.com/velodrome-finance/superchain-contracts/commit/a739cdd788673d5fb08736e456fd8ec15d262dc7)      |
+| Chain      | Addresses          | 
+|------------|--------------------|
+| Arbitrum   |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/arbitrum.json) |
+| Base       |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/base.json) |
+| Bob        |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/bob.json) |
+| Celo       |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/celo.json) |
+| Fraxtal    |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/fraxtal.json) |
+| Ink        |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/ink.json) |
+| Lisk       |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/lisk.json) |
+| Mantle     |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/mantle.json) |
+| Metal      |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/metal.json) |
+| Mode       |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/mode.json) |
+| Optimism   |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/optimism.json) |
+| Polygon    |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/polygon.json) |
+| Soneium    |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/soneium.json) |
+| Superseed  |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/superseed.json) |
+| Unichain   |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/unichain.json) |
+| Worldchain |[Addresses](https://github.com/hyperlane-xyz/superchain-xerc20/blob/main/deployment-addresses/worldchain.json) |
 
-Celo contains the root deployment contracts, and these factory addresses are used by all leaf chains.
+Optimism contains the root deployment contracts, and these factory addresses are 
+used by all leaf chains.

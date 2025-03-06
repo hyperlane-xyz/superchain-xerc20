@@ -13,6 +13,8 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     bytes32 constant MANAGER = keccak256("MANAGER");
     bytes32 constant DEFAULT_ADMIN_ROLE = 0x00;
 
+    uint256 maxAmount;
+
     address public manager;
     address public admin;
 
@@ -29,7 +31,8 @@ contract ManagedXERC20LockboxTest is BaseFixture {
         vm.prank(admin);
         managedLockbox.grantRole(MANAGER, manager);
 
-        uint112 bufferCap = (TOKEN_1 * 5_000).toUint112();
+        maxAmount = TOKEN_1 * 5_000;
+        uint112 bufferCap = (maxAmount).toUint112();
         uint128 rateLimitPerSecond = ((bufferCap / 2) / DAY).toUint128(); // replenish limits in 1 day
 
         vm.prank(users.owner);
@@ -40,6 +43,26 @@ contract ManagedXERC20LockboxTest is BaseFixture {
                 rateLimitPerSecond: rateLimitPerSecond
             })
         );
+    }
+
+    function test_maliciousAdmin() public {
+        address maliciousAdmin = makeAddr("maliciousAdmin");
+        vm.prank(admin);
+        managedLockbox.grantRole(DEFAULT_ADMIN_ROLE, maliciousAdmin);
+
+        vm.startPrank(maliciousAdmin);
+        managedLockbox.revokeRole(DEFAULT_ADMIN_ROLE, admin);
+        managedLockbox.revokeRole(MANAGER, manager);
+
+        uint256 amount = TOKEN_1 * 1_000;
+        deal(address(xVelo), manager, amount);
+        deal(address(rewardToken), address(managedLockbox), amount);
+
+        vm.startPrank(manager);
+        xVelo.approve(address(managedLockbox), amount);
+        // Expect revert because manager role was revoked
+        vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
+        managedLockbox.withdraw(amount);
     }
 
     function test_initialState() public view {
@@ -72,7 +95,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     }
 
     function test_deposit() public {
-        uint256 amount = TOKEN_1 * 1_000;
+        uint256 amount = maxAmount / 5;
         deal(address(rewardToken), users.alice, amount);
         vm.prank(users.alice);
         rewardToken.approve(address(managedLockbox), amount);
@@ -92,7 +115,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     }
 
     function test_deposit_revertsWhenRateLimited() public {
-        uint256 amount = TOKEN_1 * 5_000;
+        uint256 amount = maxAmount;
         deal(address(rewardToken), users.alice, amount);
         vm.startPrank(users.alice);
         rewardToken.approve(address(managedLockbox), amount);
@@ -103,7 +126,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     }
 
     function test_withdraw() public {
-        uint256 amount = TOKEN_1 * 1_000;
+        uint256 amount = maxAmount / 5;
         deal(address(xVelo), manager, amount);
         deal(address(rewardToken), address(managedLockbox), amount);
 
@@ -118,7 +141,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     }
 
     function test_withdraw_revertsWhenRateLimited() public {
-        uint256 amount = TOKEN_1 * 5_000;
+        uint256 amount = maxAmount;
 
         vm.startPrank(manager);
         xVelo.approve(address(managedLockbox), amount);
@@ -128,7 +151,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     }
 
     function test_withdrawTo() public {
-        uint256 amount = TOKEN_1 * 1_000;
+        uint256 amount = maxAmount / 5;
         deal(address(xVelo), manager, amount);
         deal(address(rewardToken), address(managedLockbox), amount);
 
@@ -143,7 +166,7 @@ contract ManagedXERC20LockboxTest is BaseFixture {
     }
 
     function test_withdrawTo_revertsWhenRateLimited() public {
-        uint256 amount = TOKEN_1 * 5_000;
+        uint256 amount = maxAmount;
 
         vm.startPrank(manager);
         xVelo.approve(address(managedLockbox), amount);
