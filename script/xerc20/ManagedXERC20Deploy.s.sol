@@ -12,11 +12,7 @@ contract ManagedXERC20Deploy is Script {
     function run() public {
         address admin = msg.sender;
         vm.startBroadcast();
-        ManagedXERC20Lockbox lockbox = new ManagedXERC20Lockbox(
-            xerc20,
-            erc20,
-            admin
-        );
+        ManagedXERC20Lockbox lockbox = new ManagedXERC20Lockbox(xerc20, erc20, admin);
         lockbox.grantRole(lockbox.MANAGER(), manager);
         vm.stopBroadcast();
     }

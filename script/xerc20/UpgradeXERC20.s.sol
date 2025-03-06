@@ -15,7 +15,8 @@ import {ICreateX} from "createX/ICreateX.sol";
 import {CreateXLibrary} from "src/libraries/CreateXLibrary.sol";
 
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import {ERC20PermitUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
+import {ERC20PermitUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
 
 interface Safe {
     function getThreshold() external view returns (uint256);
@@ -24,22 +25,15 @@ interface Safe {
 }
 
 interface WarpRoute {
-    function transferRemote(
-        uint32 _destination,
-        bytes32 _recipient,
-        uint256 _amountOrId
-    ) external payable;
-    function quoteGasPayment(
-        uint32 _destinationDomain
-    ) external view returns (uint256);
+    function transferRemote(uint32 _destination, bytes32 _recipient, uint256 _amountOrId) external payable;
+    function quoteGasPayment(uint32 _destinationDomain) external view returns (uint256);
 }
 
 // This is copied from ERC20Upgradeable
 contract ERC20NameSymbolSetter is ERC20Upgradeable, ERC20PermitUpgradeable {
-    bytes32 private constant ERC20StorageLocation =
-        0x52c63247e1f47db19d5ce0460030c497f067ca4cebf71ba98eeadabe20bace00;
-    bytes32 private constant EIP712StorageLocation =
-        0xa16a46d94261c7517cc8ff89f61c0ce93598e3c849801011dee649a6a557d100;
+    bytes32 private constant ERC20StorageLocation = 0x52c63247e1f47db19d5ce0460030c497f067ca4cebf71ba98eeadabe20bace00;
+    bytes32 private constant EIP712StorageLocation = 0xa16a46d94261c7517cc8ff89f61c0ce93598e3c849801011dee649a6a557d100;
+
     event NameAndSymbolSet(string name, string symbol);
 
     function getERC20Storage() private pure returns (ERC20Storage storage $) {
@@ -54,10 +48,7 @@ contract ERC20NameSymbolSetter is ERC20Upgradeable, ERC20PermitUpgradeable {
         }
     }
 
-    function setNameAndSymbol(
-        string memory _newName,
-        string memory _newSymbol
-    ) external {
+    function setNameAndSymbol(string memory _newName, string memory _newSymbol) external {
         ERC20Storage storage $ = getERC20Storage();
         $._name = _newName;
         $._symbol = _newSymbol;
@@ -79,21 +70,13 @@ contract UpgradeXERC20 is Script {
     address warpRouteAddress = vm.envAddress("WARP_ROUTE");
 
     // Return the current limit configuration
-    function assertInvariants(
-        string memory name,
-        string memory symbol,
-        address lockbox
-    ) private returns (RateLimitMidPoint memory limits) {
+    function assertInvariants(string memory name, string memory symbol, address lockbox)
+        private
+        returns (RateLimitMidPoint memory limits)
+    {
         // make assertions
-        require(
-            keccak256(bytes(proxiedXERC20.name())) == keccak256(bytes(name)),
-            "Name mismatch"
-        );
-        require(
-            keccak256(bytes(proxiedXERC20.symbol())) ==
-                keccak256(bytes(symbol)),
-            "Symbol mismatch"
-        );
+        require(keccak256(bytes(proxiedXERC20.name())) == keccak256(bytes(name)), "Name mismatch");
+        require(keccak256(bytes(proxiedXERC20.symbol())) == keccak256(bytes(symbol)), "Symbol mismatch");
 
         require(proxiedXERC20.lockbox() == lockbox, "Lockbox mismatch");
 
@@ -125,14 +108,10 @@ contract UpgradeXERC20 is Script {
         }
         // to celo if non-celo, otherwise to base
 
-        uint256 gasPayment = WarpRoute(warpRouteAddress).quoteGasPayment(
-            destinationDomain
-        );
+        uint256 gasPayment = WarpRoute(warpRouteAddress).quoteGasPayment(destinationDomain);
         vm.deal(address(this), gasPayment);
         WarpRoute(warpRouteAddress).transferRemote{value: gasPayment}(
-            destinationDomain,
-            bytes32(uint256(uint160(address(this)))),
-            1
+            destinationDomain, bytes32(uint256(uint160(address(this)))), 1
         );
 
         return proxiedXERC20.rateLimits(warpRouteAddress);
@@ -153,24 +132,10 @@ contract UpgradeXERC20 is Script {
     }
 
     function getCurrentImplementation() internal view returns (address) {
-        return
-            address(
-                uint160(
-                    uint256(
-                        vm.load(
-                            proxiedXERC20Address,
-                            ERC1967Utils.IMPLEMENTATION_SLOT
-                        )
-                    )
-                )
-            );
+        return address(uint160(uint256(vm.load(proxiedXERC20Address, ERC1967Utils.IMPLEMENTATION_SLOT))));
     }
 
-    function makeAndlogCall(
-        address _target,
-        string memory _signature,
-        bytes memory _data
-    ) public {
+    function makeAndlogCall(address _target, string memory _signature, bytes memory _data) public {
         console.log("Making call");
         console.log("Target: ", _target);
         console.log("Signature: ", _signature);
@@ -190,11 +155,7 @@ contract UpgradeXERC20 is Script {
         // store previous owner
         address previousOwner = proxiedXERC20.owner();
         address lockbox = proxiedXERC20.lockbox();
-        RateLimitMidPoint memory previousRateLimits = assertInvariants(
-            "Super USDT",
-            "USDT",
-            lockbox
-        );
+        RateLimitMidPoint memory previousRateLimits = assertInvariants("Super USDT", "USDT", lockbox);
 
         // assert that lockbox is 0x0 on non-celo chains
         if (block.chainid != 42220) {
@@ -210,23 +171,15 @@ contract UpgradeXERC20 is Script {
         vm.startBroadcast();
         // Use create3 so that the safe proposals are all consistent
         address temporaryImplementation = cx.deployCreate3(
-            SETTER_ENTROPY.calculateSalt({_deployer: msg.sender}),
-            type(ERC20NameSymbolSetter).creationCode
+            SETTER_ENTROPY.calculateSalt({_deployer: msg.sender}), type(ERC20NameSymbolSetter).creationCode
         );
 
         console.log("temporary implementation: ", temporaryImplementation);
         vm.stopBroadcast();
 
         // Gather proxy admin info
-        ProxyAdmin proxyAdmin = ProxyAdmin(
-            address(
-                uint160(
-                    uint256(
-                        vm.load(proxiedXERC20Address, ERC1967Utils.ADMIN_SLOT)
-                    )
-                )
-            )
-        );
+        ProxyAdmin proxyAdmin =
+            ProxyAdmin(address(uint160(uint256(vm.load(proxiedXERC20Address, ERC1967Utils.ADMIN_SLOT)))));
 
         console.log("Proxy admin: ", address(proxyAdmin));
         address owner = proxyAdmin.owner();
@@ -239,21 +192,14 @@ contract UpgradeXERC20 is Script {
             address(proxyAdmin),
             "upgradeAndCall(address,address,bytes)",
             abi.encodeWithSignature(
-                "upgradeAndCall(address,address,bytes)",
-                proxiedXERC20Address,
-                address(temporaryImplementation),
-                ""
+                "upgradeAndCall(address,address,bytes)", proxiedXERC20Address, address(temporaryImplementation), ""
             )
         );
 
         makeAndlogCall(
             proxiedXERC20Address,
             "setNameAndSymbol(string,string)",
-            abi.encodeWithSignature(
-                "setNameAndSymbol(string,string)",
-                "OpenUSDT",
-                "oUSDT"
-            )
+            abi.encodeWithSignature("setNameAndSymbol(string,string)", "OpenUSDT", "oUSDT")
         );
 
         // Revert back to the old implementation
@@ -261,36 +207,19 @@ contract UpgradeXERC20 is Script {
             address(proxyAdmin),
             "upgradeAndCall(address,address,bytes)",
             abi.encodeWithSignature(
-                "upgradeAndCall(address,address,bytes)",
-                proxiedXERC20Address,
-                oldImplementation,
-                ""
+                "upgradeAndCall(address,address,bytes)", proxiedXERC20Address, oldImplementation, ""
             )
         );
         vm.stopPrank();
 
         // Post-flight check upgraded contract
-        RateLimitMidPoint memory newRateLimits = assertInvariants(
-            "OpenUSDT",
-            "oUSDT",
-            lockbox
-        );
-        require(
-            previousRateLimits.bufferCap == newRateLimits.bufferCap,
-            "Buffer cap mismatch"
-        );
-        require(
-            previousRateLimits.rateLimitPerSecond ==
-                newRateLimits.rateLimitPerSecond,
-            "Rate limit mismatch"
-        );
+        RateLimitMidPoint memory newRateLimits = assertInvariants("OpenUSDT", "oUSDT", lockbox);
+        require(previousRateLimits.bufferCap == newRateLimits.bufferCap, "Buffer cap mismatch");
+        require(previousRateLimits.rateLimitPerSecond == newRateLimits.rateLimitPerSecond, "Rate limit mismatch");
         // compare owners
         require(previousOwner == proxiedXERC20.owner(), "Owner mismatch");
         // check that the old implementation is the current implementation
-        require(
-            oldImplementation == getCurrentImplementation(),
-            "Implementation mismatch"
-        );
+        require(oldImplementation == getCurrentImplementation(), "Implementation mismatch");
         console.log("Upgrade complete");
     }
 }

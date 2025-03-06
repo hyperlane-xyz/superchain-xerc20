@@ -5,7 +5,6 @@ import "./XERC20.t.sol";
 import {SigUtils} from "test/utils/SigUtils.sol";
 import "@openzeppelin5/contracts/proxy/transparent/ProxyAdmin.sol";
 
-
 contract xVeloUnitTest is XERC20Test {
     using SafeCast for uint256;
 
