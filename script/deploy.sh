@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Source bashrc if it exists
+if [ -f "$HOME/.bashrc" ]; then
+    source "$HOME/.bashrc"
+fi
+
 # Start from repository root
 cd "$(dirname "$0")/.."
 
