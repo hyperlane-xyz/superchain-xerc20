@@ -63,6 +63,8 @@ deploy_contract() {
     local verifierType
     if [ "$explorerFamily" = "blockscout" ]; then
         verifierType="blockscout"
+    elif [ "$explorerFamily" = "routescan" ]; then
+        verifierType="blockscout"
     else
         verifierType="etherscan"
     fi
