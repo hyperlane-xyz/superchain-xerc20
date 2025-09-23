@@ -71,14 +71,20 @@ deploy_contract() {
 
     local verifierUrl=$(meta $chain blockExplorers.0.apiUrl)
 
+    # Set gas price arguments based on chain
+    local gas_args=""
+    if [ "$chain" = "zerogravity" ]; then
+        gas_args="--with-gas-price 3000000000 --priority-gas-price 2000000000"  # Max fee 3 gwei, priority fee 2 gwei
+    fi
+
     # First run simulation
-    if ! forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) -v; then
+    if ! forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) $gas_args -v; then
         echo "Simulation failed for $chain"
         return 1
     fi
 
     # Then do actual deployment
-    if ! forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) --broadcast --verify -v --verifier $verifierType --verifier-url $verifierUrl --private-key $(hypkey mainnet3) --evm-version paris; then
+    if ! forge script "$target":"$contract_name" --slow --rpc-url $(rpc "mainnet3" $chain) --broadcast --verify -v --verifier $verifierType --verifier-url $verifierUrl --private-key $(hypkey mainnet3) --evm-version paris $gas_args; then
         echo "Deployment failed for $chain"
         return 1
     fi
