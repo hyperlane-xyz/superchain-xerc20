@@ -1,0 +1,12 @@
+{
+  "libraries": {
+    "RateLimitMidpointCommonLibrary": {
+      "evm": "0x374d1A2F2BEAaF8926B2607Ca2E23260d3b340dF",
+      "tron": "TF1cXmd5e7CfWp2jgBaVQz1TYgda4omzDy"
+    }
+  },
+  "leafXERC20Implementation": "0x5AeB35Fb801801b26D7d454d41A0A3De4f487a6A",
+  "leafXERC20ImplementationTron": "TJFwb4WqpHJuTfiruFZbUcYSxhgLDBVKVo",
+  "leafXERC20": "0xcB44E40813b21C64BAacB1bC9B9A2272320a22E2",
+  "leafXERC20Tron": "TUVzhcYfWwAp3qGdgTFDKa7cePLvurvxdA"
+}

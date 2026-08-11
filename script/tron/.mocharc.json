@@ -1,0 +1,5 @@
+{
+  "spec": "script/tron/**/*.test.mts",
+  "timeout": 600000,
+  "node-option": ["import=tsx"]
+}
