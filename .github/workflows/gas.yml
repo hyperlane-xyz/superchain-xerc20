@@ -20,7 +20,7 @@ jobs:
           submodules: recursive
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
