@@ -1,0 +1,20 @@
+{
+  "lib/ExcessivelySafeCall": {
+    "rev": "81cd99ce3e69117d665d7601c330ea03b97acce0"
+  },
+  "lib/createX": {
+    "rev": "cbac803268835138f86a69bfe01fcf05a50e0447"
+  },
+  "lib/forge-gas-snapshot": {
+    "rev": "03b10b10574e069081f6b84f5e1244e42041511d"
+  },
+  "lib/forge-std": {
+    "rev": "1eea5bae12ae557d589f9f0f0edae2faa47cb262"
+  },
+  "lib/openzeppelin-contracts": {
+    "rev": "dbb6104ce834628e473d2173bbc9d47f81a9eec3"
+  },
+  "lib/openzeppelin-contracts-upgradeable": {
+    "rev": "723f8cab09cdae1aca9ec9cc1cfa040c2d4b06c1"
+  }
+}
